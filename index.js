@@ -1,6 +1,8 @@
 const express = require("express");
 const mongoose = require("mongoose");
 const app = express();
+const helmet = require("helmet");
+const cors = require("cors");
 const dotenv = require("dotenv");
 dotenv.config();
 const connectDB = require("./settings/connectDB");
@@ -19,8 +21,10 @@ connectDB()
   .then(() => console.log("Connected to Mongodb..."))
   .catch((error) => console.error(error));
 
+app.use(helmet());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json({ limit: "20mb" }));
+app.use(cors());
 
 app.use("/auth", authRouter);
 app.use("/users", authMiddleware, userRouter);
