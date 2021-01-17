@@ -2,8 +2,6 @@ const express = require("express");
 const userController = require("../controllers/users");
 const router = express.Router();
 
-
-
 //Route to update fields of logged in user
 router.post("/updatefields", userController.UpdateFields);
 
@@ -17,10 +15,6 @@ router.post("/deleteuser", userController.DeleteUser);
 router.post("/updatecurrentlocation", userController.UpdateCurrentLocation);
 
 //Route to update profile picture url of uploaded image
-router.post("/updateprofilepicture", userController.UpdateProfilePicture);
-
-
-
-
+router.patch("/updateUser", userController.UpdateUser);
 
 module.exports = router;

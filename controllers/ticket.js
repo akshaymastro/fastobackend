@@ -1,166 +1,132 @@
 const User = require("../model/User.model");
 const Ride = require("../model/Ride.model");
 const Ticket = require("../model/Ticket.model");
-const bcrypt = require("bcrypt");
-const jwtSecret = require("../config/jwtSecret");
-const jwt = require("jsonwebtoken");
-const mongoose = require("mongoose");
-const moment = require('moment');
-
-
+const moment = require("moment");
+const jwtToken = require("../helpers/jwt");
+const responseHandler = require("../helpers/responseHandler");
 //Create Ticket
-exports.CreateTicket = async(req,res) => {
-    try {
-        const authheader = req.get("Authorization");
-        jwt.verify(authheader, jwtSecret, async(err,data) => {
-            if(err){
-                res.send(err)
-            }else{
-                //res.send(data)
-                const createticket = new Ticket();
-                const {RideID,Subject,Message,CreatedAt,Time,Status,ReplyID,Satisfied} = req.body;
-                createticket.ByUserID = data.completeUser._id
-                createticket.RideID = RideID
-                createticket.Subject = Subject
-                createticket.Message = Message
-                createticket.CreatedAt = moment().format("MMM Do YY")
-                createticket.Time = moment().format('h:mm:ss a')
-                createticket.Status = Status
-                createticket.ReplyID = ReplyID
-                createticket.Satisfied = Satisfied
+exports.CreateTicket = async (req, res, next) => {
+  try {
+    const authheader = req.get("Authorization");
+    const decoded = await jwtToken.decryptToken(authheader);
+    const createticket = new Ticket();
+    const {
+      RideID,
+      Subject,
+      Message,
+      CreatedAt,
+      Time,
+      Status,
+      ReplyID,
+      Satisfied,
+    } = req.body;
+    createticket.ByUserID = decoded._id;
+    createticket.RideID = RideID;
+    createticket.Subject = Subject;
+    createticket.Message = Message;
+    createticket.CreatedAt = moment().format("MMM Do YY");
+    createticket.Time = moment().format("h:mm:ss a");
+    createticket.Status = Status;
+    createticket.ReplyID = ReplyID;
+    createticket.Satisfied = Satisfied;
 
-                createticket.save(async(error1,data1) => {
-                      if(error1){
-                          res.send(error1)
-                      }else{
-                          //res.send(data1)
-                          const saveTickettoUser = await User.findByIdAndUpdate(data.completeUser._id, {
-                            $push: {userTicket:data1._id}
-                          })
-                          res.send(saveTickettoUser)
-                      }
-                })
-            }
-        }) 
-    } catch(error) {
-        console.log(error)
-    }
-}
+    const newTicket = await createticket.save();
+    const saveTickettoUser = await User.findByIdAndUpdate(decoded._id, {
+      $push: { userTicket: newTicket._id },
+    });
+    responseHandler.data(res, saveTickettoUser, 200);
+  } catch (error) {
+    next(error);
+  }
+};
 
 //Delete Ticket
-exports.DeleteTicket = async(req,res) => {
-    try{
-        const authheader = req.get("Authorization");
-        jwt.verify(authheader, jwtSecret, async(err,data) => {
-            if (err) {
-                res.send(err)
-            } else {
-                const deleteticket = await Ticket.findByIdAndDelete({_id:req.body.ticketid})
-                      console.log(deleteticket)
-                      console.log('Next')
-                      console.log(data.completeUser)
-                const deleteticketfromuser = await User.findByIdAndUpdate(data.completeUser._id, {
-                    $pull: {userTicket:deleteticket._id}
-                })
-                res.send(deleteticketfromuser)
-            }
-
-        })
-
-    } catch(error) {
-        console.log(error)
-    }
-}
+exports.DeleteTicket = async (req, res, next) => {
+  try {
+    const authheader = req.get("Authorization");
+    const decoded = await jwtToken.decryptToken(authheader);
+    const deleteticket = await Ticket.findByIdAndDelete({
+      _id: req.body.ticketid,
+    });
+    const deleteticketfromuser = await User.findByIdAndUpdate(decoded._id, {
+      $pull: { userTicket: deleteticket._id },
+    });
+    responseHandler.data(res, deleteticketfromuser, 200);
+  } catch (error) {
+    next(error);
+  }
+};
 
 //Reply Ticket
-exports.ReplyTicket = async(req,res) => {
-    try{
-        const authheader = req.get("Authorization");
-        jwt.verify(authheader, jwtSecret, async(err,data) => {
-            if (err) {
-                res.send(err)
-            } else {
-                const {ReplyMsg} = req.body;
-                var ReplyToTicket = {
-                    ByUser: data.completeUser._id,
-                    ByUserAvatar: "https://images.unsplash.com/photo-1494548162494-384bba4ab999?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&w=1000&q=80",
-                    ReplyMsg: ReplyMsg,
-                    ReplyTime: moment().format('h:mm:ss a'),
-                    RelpyDate: moment().format("MMM Do YY")
-                }
-                const replyticket = await Ticket.findByIdAndUpdate({_id:req.body.ticketid},{
-                    $push: {
-                       ReplyToTicket: ReplyToTicket
-                    }
-                })
-                      res.send(replyticket)
-            }
-
-        })
-
-    } catch(error) {
-        console.log(error)
-    }
-}
-
+exports.ReplyTicket = async (req, res) => {
+  try {
+    const authheader = req.get("Authorization");
+    const decoded = await jwtToken.decryptToken(authheader);
+    const { ReplyMsg } = req.body;
+    var ReplyToTicket = {
+      ByUser: decoded._id,
+      ByUserAvatar:
+        "https://images.unsplash.com/photo-1494548162494-384bba4ab999?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&w=1000&q=80",
+      ReplyMsg: ReplyMsg,
+      ReplyTime: moment().format("h:mm:ss a"),
+      RelpyDate: moment().format("MMM Do YY"),
+    };
+    const replyticket = await Ticket.findByIdAndUpdate(
+      { _id: req.body.ticketid },
+      {
+        $push: {
+          ReplyToTicket: ReplyToTicket,
+        },
+      }
+    );
+    responseHandler.data(res, replyticket, 200);
+  } catch (error) {
+    next(error);
+  }
+};
 
 //Get Ticket
-exports.GetTicket = async(req,res) => {
-    try{
-        const authheader = req.get("Authorization");
-        jwt.verify(authheader, jwtSecret, async(err,data) => {
-            if (err) {
-                res.send(err)
-            } else {
-                const getticket = await Ticket.find({ByUserID:data.completeUser._id})
-                      res.send(getticket)
-            }
+exports.GetTicket = async (req, res, next) => {
+  try {
+    const authheader = req.get("Authorization");
+    const decoded = await jwtToken.decryptToken(authheader);
 
-        })
-
-    } catch(error) {
-        console.log(error)
-    }
-}
+    const getticket = await Ticket.find({
+      ByUserID: decoded._id,
+    });
+    responseHandler.data(res, getticket, 200);
+  } catch (error) {
+    next(error);
+  }
+};
 
 //Get Ticket
-exports.GetTicketReplies = async(req,res) => {
-    try{
-        const authheader = req.get("Authorization");
-        jwt.verify(authheader, jwtSecret, async(err,data) => {
-            if (err) {
-                res.send(err)
-            } else {
-                const getticketreplies = await Ticket.find({ByUserID:data.completeUser._id})
-                      res.send(getticketreplies[0].ReplyToTicket)
-                      console.log(getticketreplies[0].ReplyToTicket)
-            }
-
-        })
-
-    } catch(error) {
-        console.log(error)
-    }
-}
-
+exports.GetTicketReplies = async (req, res) => {
+  try {
+    const authheader = req.get("Authorization");
+    const decoded = await jwtToken.decryptToken(authheader);
+    const getticketreplies = await Ticket.find({
+      ByUserID: decoded._id,
+    });
+    responseHandler.data(res, getticketreplies[0].ReplyToTicket, 200);
+  } catch (error) {
+    next(error);
+  }
+};
 
 //Close Ticket
-exports.CloseTicket = async(req,res) => {
-    try{
-        const authheader = req.get("Authorization");
-        jwt.verify(authheader, jwtSecret, async(err,data) => {
-            if (err) {
-                res.send(err)
-            } else {
-                const closeticket = await Ticket.findByIdAndUpdate({_id:req.body.ticketid},{
-                    Status: 'closed'
-                })
-                      res.send(closeticket)
-            }
-
-        })
-
-    } catch(error) {
-        console.log(error)
-    }
-}
+exports.CloseTicket = async (req, res) => {
+  try {
+    const authheader = req.get("Authorization");
+    const decoded = await jwtToken.decryptToken(authheader);
+    const closeticket = await Ticket.findByIdAndUpdate(
+      { _id: req.body.ticketid },
+      {
+        Status: "closed",
+      }
+    );
+    responseHandler.success(res, closeticket, 200);
+  } catch (error) {
+    next(error);
+  }
+};

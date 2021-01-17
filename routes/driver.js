@@ -12,10 +12,12 @@ router.post("/updatedriverfields", driverController.UpdateDriverFields);
 router.post("/deleteDriver", driverController.DeleteDriver);
 
 //Route to update current location of drivers
-router.post("/updatecurrentdriverlocation", driverController.UpdateCurrentDriverLocation);
+router.patch("/updateUser", driverController.UpdateUser);
 
 //Route to update profile picture url of uploaded image
-router.post("/updatedriverprofilepicture", driverController.UpdateDriverProfilePicture);
+router.post(
+  "/updatedriverprofilepicture",
+  driverController.UpdateDriverProfilePicture
+);
 
 module.exports = router;
-

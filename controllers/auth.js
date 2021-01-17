@@ -1,65 +1,59 @@
 const User = require("../model/User.model");
 const Driver = require("../model/Driver.model");
-const bcrypt = require("bcrypt");
-const jwt = require("jsonwebtoken");
-const jwtSecret = require("../config/jwtSecret");
-const axios = require('axios');
-const otp  = require('otp-generator');
+const otp = require("otp-generator");
+const sendSMS = require("../utils/sendSms");
+const responseHandler = require("../helpers/responseHandler");
+const jwtToken = require("../helpers/jwt");
 
-
-
-exports.GetUser = async (req,res) => {
-    try{
-     const {Mobile} = req.body;
-     await User.findOne({Mobile: Mobile}).then((Response) => {
-         res.send(Response)
-         console.log(Response)
-     })
-    }catch(err){
-        console.log(err)
-    }
-}
-
-//Login Passenger
-exports.loginUser = async (req,res) => {
-    const {Mobile} = req.body;
-
-    const user = await User.findOne({ Mobile });
-
-    if(user) {
-     const token = jwt.sign({completeUser:user},jwtSecret);
-     res.send({token: token,user: user})
-    }
-    else{
-        try{
-            var Newuser = new User();
-            Newuser.Mobile = req.body.Mobile;
-            Newuser.save((err,user) => {
-                if(err){
-                    res.send('Error in creating a user')
-                } else{
-                    const token = jwt.sign({completeUser:user},jwtSecret);
-                    res.send({token: token,user: user})
-                }
-            })
-         }catch(err){
-             res.send(`Problem in CreateUser API in controller/auth.js`)
-         }
-    }
+exports.GetUser = async (req, res, next) => {
+  try {
+    const { Mobile } = req.body;
+    const user = await User.findOne({ Mobile: Mobile });
+    responseHandler.data(res, user, 200);
+  } catch (err) {
+    next(err);
+  }
 };
 
+//Login Passenger
+exports.loginUser = async (req, res, next) => {
+  const { Mobile } = req.body;
+  try {
+    const user = await User.findOne({ Mobile });
+    const token = "";
+    if (user) {
+      token = await jwtToken.createNewToken(user);
+    } else {
+      var Newuser = new User();
+      Newuser.Mobile = req.body.Mobile;
+      Newuser.save(async (err, user) => {
+        if (err) {
+          next(err);
+        } else {
+          token = await jwtToken.createNewToken(user);
+        }
+      });
+      responseHandler.token(res, token, 200);
+    }
+  } catch (err) {
+    next(err);
+  }
+};
 
 //Login Driver
-exports.loginDriver = async (req,res) => {
-    const {Mobile} = req.body;
+exports.loginDriver = async (req, res, next) => {
+  try {
+    const { Mobile } = req.body;
 
     const driver = await Driver.findOne({ Mobile });
 
-    if(driver) {
-     const token = jwt.sign({completeDriver:driver},jwtSecret);
-     res.send({token: token,user: driver})
+    if (driver) {
+      const token = await jwtToken.createNewToken(driver);
+      responseHandler.token(res, token, 200);
     }
-    res.send(`The driver with mobile ${Mobile} does not exist`);
+  } catch (e) {
+    next(e);
+  }
 };
 
 //Send OTP
@@ -67,57 +61,48 @@ exports.loginDriver = async (req,res) => {
 //OTP is to be stored in react native async storage
 //if sent OTP == Entered OTP
 //then enter the app
-  exports.SendOTP = async (req,res) => {
-    try {
-        const {Mobile} = req.body;
-        const GeneratedOtp = otp.generate(5, {digits: true,alphabets: false,upperCase:false,specialChars:false});
-        await axios.get(`http://125.16.147.178/VoicenSMS/webresources/CreateSMSCampaignGet?ukey=OqdXRL50BekORDoAW8eCQH4uT&msisdn=${Mobile}&language=0&credittype=2&senderid=GOMRKT&templateid=0&message=${GeneratedOtp}&filetype=2`)
-        .then(data => {
-             sentotp = Object.assign({
-               otp: GeneratedOtp
-              }, data.data)
-              res.send(sentotp)
-        })
-        .catch(err => res.send(err))
-    } catch (err) {
-        res.status(500).send(err);
-    }   
+exports.SendOTP = async (req, res) => {
+  try {
+    const { Mobile } = req.body;
+    const GeneratedOtp = otp.generate(5, {
+      digits: true,
+      alphabets: false,
+      upperCase: false,
+      specialChars: false,
+    });
+    const res = await sendSMS(Mobile, GeneratedOtp);
+    sentotp = Object.assign(
+      {
+        otp: GeneratedOtp,
+      },
+      data.data
+    );
+    responseHandler.data(res, { otp: sentotp }, 200);
+  } catch (err) {
+    next(err);
   }
+};
 
 //Create User
-exports.createUser = async (req,res) => {
-    try{
-       var user = new User();
-       user.Mobile = req.body.Mobile;
-       user.save((err,data) => {
-           if(err){
-               res.send('Error in creating a user')
-           } else{
-               res.send(data)
-           }
-       })
-    }catch(err){
-        res.send(`Problem in CreateUser API in controller/auth.js`)
-    }
-}
+exports.createUser = async (req, res, next) => {
+  try {
+    var user = new User();
+    user.Mobile = req.body.Mobile;
+    const response = await user.save();
+    responseHandler.data(res, response, 200);
+  } catch (err) {
+    next(err);
+  }
+};
 
 //Create Driver
-exports.createDriver = async (req,res) => {
-    try{
-       var driver = new Driver();
-       driver.Mobile = req.body.Mobile;
-       driver.save(async(err,data) => {
-           if(err){
-               res.send('Error in creating a user')
-           } else{
-               res.send(data)
-           }
-       })
-    }catch(err){
-        res.send(`Problem in CreateUser API in controller/auth.js`)
-    }
-}
-
-
-
-  
+exports.createDriver = async (req, res, next) => {
+  try {
+    var driver = new Driver();
+    driver.Mobile = req.body.Mobile;
+    const response = await driver.save();
+    responseHandler.data(res, response, 200);
+  } catch (err) {
+    next(err);
+  }
+};
