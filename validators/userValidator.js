@@ -1,6 +1,6 @@
 "use strict";
 const Joi = require("joi");
-Joi.objectId = require('joi-objectid')(Joi)
+Joi.objectId = require("joi-objectid")(Joi);
 
 const register = Joi.object({
   password: Joi.string().required().min(6),
@@ -12,13 +12,13 @@ const register = Joi.object({
   currentLocation: Joi.string(),
   pickupLocation: Joi.string(),
   dropLocation: Joi.string(),
-  rideHistory:Joi.objectId(),
+  rideHistory: Joi.objectId(),
   ongoingRide: Joi.string(),
-  userTicket:Joi.objectId(),
-  chatSupport:Joi.objectId(),
-  userNofifications: [{}],
-  userInvoice: [{}],
-  walletMoney:Joi.string(),
+  userTicket: Joi.objectId(),
+  chatSupport: Joi.objectId(),
+  userNofifications: Joi.string(),
+  userInvoice: Joi.string(),
+  walletMoney: Joi.string(),
   dp: Joi.string(),
   address: Joi.string(),
   state: Joi.string(),

@@ -7,6 +7,7 @@ const dotenv = require("dotenv");
 dotenv.config();
 const connectDB = require("./settings/connectDB");
 const bodyParser = require("body-parser");
+const errorHanlder = require("./utils/globalErrorHandlers");
 const userRouter = require("./routes/users");
 const authRouter = require("./routes/auth");
 const adminRouter = require("./routes/admin");
@@ -32,5 +33,6 @@ app.use("/ride", authMiddleware, rideRouter);
 app.use("/ticket", authMiddleware, ticketRouter);
 app.use("/ticketReply", authMiddleware, ticketReplyRouter);
 app.use("/admin", adminRouter);
+app.use(errorHanlder);
 
 app.listen(PORT, () => console.log(`Server is running on ${PORT}`));
