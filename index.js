@@ -15,7 +15,7 @@ const rideRouter = require("./routes/ride");
 const ticketRouter = require("./routes/ticket");
 const ticketReplyRouter = require("./routes/ticketReply");
 const authMiddleware = require("./middleware/auth");
-
+const errorHandler = require("./utils/globalErrorHandler");
 const PORT = process.env.PORT;
 
 connectDB()
@@ -33,6 +33,5 @@ app.use("/ride", authMiddleware, rideRouter);
 app.use("/ticket", authMiddleware, ticketRouter);
 app.use("/ticketReply", authMiddleware, ticketReplyRouter);
 app.use("/admin", adminRouter);
-app.use(errorHanlder);
-
+app.use(errorHandler);
 app.listen(PORT, () => console.log(`Server is running on ${PORT}`));

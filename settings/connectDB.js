@@ -1,5 +1,5 @@
 const mongoose = require("mongoose");
-const { DB_URL, DB_NAME } = process.env;
+const { DB_USERNAME, DB_PASS, DB_NAME } = process.env;
 
 const connectDB = async () => {
   try {
