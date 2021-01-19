@@ -5,8 +5,13 @@ const responseHandler = require("../helpers/responseHandler");
 //Create Ride
 exports.CreateRide = async (req, res, next) => {
   try {
-    const authheader = req.get("Authorization");
-    const decoded = await jwtToken.decryptToken(authheader);
+    // const authheader = req.get("Authorization");
+    // const decoded = await jwtToken.decryptToken(authheader);
+    const token = req.headers["authorization"];
+    const decoded = await jwtToken
+      .decryptToken(token)
+      .then((result) => result.user)
+      .catch((error) => error);
     const ride = new Ride();
     ride.ByUserID = decoded._id;
     ride.fromLocation = req.body.fromLocation;
@@ -25,8 +30,13 @@ exports.CreateRide = async (req, res, next) => {
 //Delete Ride
 exports.DeleteRide = async (req, res) => {
   try {
-    const authheader = req.get("Authorization");
-    const decoded = await jwtToken.decryptToken(authheader);
+    // const authheader = req.get("Authorization");
+    // const decoded = await jwtToken.decryptToken(authheader);
+    const token = req.headers["authorization"];
+    const decoded = await jwtToken
+      .decryptToken(token)
+      .then((result) => result.user)
+      .catch((error) => error);
     const deleteride = await Ride.findByIdAndDelete({
       _id: req.body.rideid,
     });

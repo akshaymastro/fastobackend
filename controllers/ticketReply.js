@@ -13,8 +13,11 @@ const responseHandler = require("../helpers/responseHandler");
 //Ticket Reply
 exports.TicketReply = async (req, res, next) => {
   try {
-    const authheader = req.get("Authorization");
-    const decoded = await jwtToken.decryptToken(authheader);
+    const token = req.headers["authorization"];
+    const decoded = await jwtToken
+      .decryptToken(token)
+      .then((result) => result.user)
+      .catch((error) => error);
     const createreplyticket = new TicketReply();
     const { replytoticketID, replyMsg, Replytime, replydate } = req.body;
     createreplyticket.ByUserID = decoded._id;

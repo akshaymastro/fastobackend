@@ -7,8 +7,13 @@ const responseHandler = require("../helpers/responseHandler");
 //Create Ticket
 exports.CreateTicket = async (req, res, next) => {
   try {
-    const authheader = req.get("Authorization");
-    const decoded = await jwtToken.decryptToken(authheader);
+    // const authheader = req.get("Authorization");
+    // const decoded = await jwtToken.decryptToken(authheader);
+    const token = req.headers["authorization"];
+    const decoded = await jwtToken
+      .decryptToken(token)
+      .then((result) => result.user)
+      .catch((error) => error);
     const createticket = new Ticket();
     const {
       RideID,
@@ -43,8 +48,13 @@ exports.CreateTicket = async (req, res, next) => {
 //Delete Ticket
 exports.DeleteTicket = async (req, res, next) => {
   try {
-    const authheader = req.get("Authorization");
-    const decoded = await jwtToken.decryptToken(authheader);
+    // const authheader = req.get("Authorization");
+    // const decoded = await jwtToken.decryptToken(authheader);
+    const token = req.headers["authorization"];
+    const decoded = await jwtToken
+      .decryptToken(token)
+      .then((result) => result.user)
+      .catch((error) => error);
     const deleteticket = await Ticket.findByIdAndDelete({
       _id: req.body.ticketid,
     });
@@ -60,8 +70,13 @@ exports.DeleteTicket = async (req, res, next) => {
 //Reply Ticket
 exports.ReplyTicket = async (req, res) => {
   try {
-    const authheader = req.get("Authorization");
-    const decoded = await jwtToken.decryptToken(authheader);
+    // const authheader = req.get("Authorization");
+    // const decoded = await jwtToken.decryptToken(authheader);
+    const token = req.headers["authorization"];
+    const decoded = await jwtToken
+      .decryptToken(token)
+      .then((result) => result.user)
+      .catch((error) => error);
     const { ReplyMsg } = req.body;
     var ReplyToTicket = {
       ByUser: decoded._id,
@@ -88,8 +103,13 @@ exports.ReplyTicket = async (req, res) => {
 //Get Ticket
 exports.GetTicket = async (req, res, next) => {
   try {
-    const authheader = req.get("Authorization");
-    const decoded = await jwtToken.decryptToken(authheader);
+    // const authheader = req.get("Authorization");
+    // const decoded = await jwtToken.decryptToken(authheader);
+    const token = req.headers["authorization"];
+    const decoded = await jwtToken
+      .decryptToken(token)
+      .then((result) => result.user)
+      .catch((error) => error);
 
     const getticket = await Ticket.find({
       ByUserID: decoded._id,
@@ -103,8 +123,13 @@ exports.GetTicket = async (req, res, next) => {
 //Get Ticket
 exports.GetTicketReplies = async (req, res) => {
   try {
-    const authheader = req.get("Authorization");
-    const decoded = await jwtToken.decryptToken(authheader);
+    // const authheader = req.get("Authorization");
+    // const decoded = await jwtToken.decryptToken(authheader);
+    const token = req.headers["authorization"];
+    const decoded = await jwtToken
+      .decryptToken(token)
+      .then((result) => result.user)
+      .catch((error) => error);
     const getticketreplies = await Ticket.find({
       ByUserID: decoded._id,
     });
@@ -117,8 +142,13 @@ exports.GetTicketReplies = async (req, res) => {
 //Close Ticket
 exports.CloseTicket = async (req, res) => {
   try {
-    const authheader = req.get("Authorization");
-    const decoded = await jwtToken.decryptToken(authheader);
+    // const authheader = req.get("Authorization");
+    // const decoded = await jwtToken.decryptToken(authheader);
+    const token = req.headers["authorization"];
+    const decoded = await jwtToken
+      .decryptToken(token)
+      .then((result) => result.user)
+      .catch((error) => error);
     const closeticket = await Ticket.findByIdAndUpdate(
       { _id: req.body.ticketid },
       {

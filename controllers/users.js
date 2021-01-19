@@ -65,8 +65,15 @@ exports.UpdateFields = async (req, res, next) => {
 //Delete user
 exports.DeleteUser = async (req, res, next) => {
   try {
-    const authheader = req.get("Authorization");
-    const decoded = await jwtToken.decryptToken(authheader);
+    const token = req.headers["authorization"];
+    const decoded = await jwtToken
+      .decryptToken(token)
+      .then((result) => result.user)
+      .catch((error) => error);
+    if (!decoded) {
+      responseHandler.failure(res, "user token is not present.", 400);
+    }
+
     await User.findByIdAndDelete({ _id: decoded._id });
     responseHandler.success(res, "User Deleted SuccessFully", 200);
   } catch (error) {
@@ -75,43 +82,51 @@ exports.DeleteUser = async (req, res, next) => {
 };
 
 //Update Current Location
-exports.UpdateCurrentLocation = async (req, res) => {
+exports.UpdateCurrentLocation = async (req, res, next) => {
   try {
-    const authheader = req.get("Authorization");
-    jwt.verify(authheader, jwtSecret, async (err, data) => {
-      if (err) {
-        console.log(err);
-      } else {
-        const { currentLocation } = req.body;
-        await User.findOneAndUpdate(
-          { _id: data.completeUser._id },
-          {
-            currentLocation: currentLocation,
-          }
-        ).then((data) => res.send(data));
+    const token = req.headers["authorization"];
+    const decoded = await jwtToken
+      .decryptToken(token)
+      .then((result) => result.user)
+      .catch((error) => error);
+    if (!decoded) {
+      responseHandler.failure(res, "user token is not present.", 400);
+    }
+    const { currentLocation } = req.body;
+    const data = await User.findOneAndUpdate(
+      { _id: decoded._id },
+      {
+        currentLocation: currentLocation,
       }
-    });
-  } catch (error) {
-    console.log(
-      error +
-        "Error from UpdateCurrentLocation API in user.js file in controllers"
     );
+    responseHandler.data(res, data, 200);
+  } catch (error) {
+    next(error);
+    // console.log(
+    //   error +
+    //     "Error from UpdateCurrentLocation API in user.js file in controllers"
+    // );
   }
 };
 
 //Update Profile Picture
 exports.UpdateUser = async (req, res, next) => {
-  console.log(req, "req");
   try {
-    const token = req.get("Authorization");
-    const decoded = jwtToken.decryptToken(token);
-    const user = await User.findOneAndUpdate(
+    const token = req.headers["authorization"];
+    const decoded = await jwtToken
+      .decryptToken(token)
+      .then((result) => result.user)
+      .catch((error) => error);
+    if (!decoded) {
+      responseHandler.failure(res, "user token is not present.", 400);
+    }
+    await User.findOneAndUpdate(
       { _id: decoded._id },
       {
         ...req.body,
       }
     );
-    responseHandler.success(res, user, 200);
+    responseHandler.data(res, "user update successfully.", 200);
   } catch (error) {
     next(error);
   }

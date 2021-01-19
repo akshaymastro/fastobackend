@@ -4,16 +4,14 @@ const jwtToken = require("../helpers/jwt");
 const responseHandler = require("../helpers/responseHandler");
 
 module.exports = async (req, res, next) => {
-  const authheader = req.get("Authorization");
-  if (!authheader) {
-    responseHandler.failure(res, "missing authorization header.", 400);
-    // return res.status(401).json({ error: "missing authorization header" });
-  }
-
   try {
-    // const token = authheader;
+    const authheader = req.headers["authorization"];
+
+    if (!authheader) {
+      responseHandler.failure(res, "missing header authorization.", 400);
+    }
+
     await jwtToken.decryptToken(authheader);
-    // jwt.verify(token, jwtsecret);
     next();
   } catch (error) {
     return responseHandler.failure(res, error, 400);

@@ -20,8 +20,13 @@ exports.getDriver = async (req, res) => {
 //Update fields
 exports.UpdateDriverFields = async (req, res, next) => {
   try {
-    const authheader = req.get("Authorization");
-    const decoded = await jwtToken.decryptToken(authheader);
+    // const authheader = req.get("Authorization");
+    // const decoded = await jwtToken.decryptToken(authheader);
+    const token = req.headers["authorization"];
+    const decoded = await jwtToken
+      .decryptToken(token)
+      .then((result) => result.user)
+      .catch((error) => error);
     const {
       firstName,
       lastName,
@@ -60,8 +65,13 @@ exports.UpdateDriverFields = async (req, res, next) => {
 //Delete user
 exports.DeleteDriver = async (req, res) => {
   try {
-    const authheader = req.get("Authorization");
-    const decoded = await jwtToken.decryptToken(authheader);
+    // const authheader = req.get("Authorization");
+    // const decoded = await jwtToken.decryptToken(authheader);
+    const token = req.headers["authorization"];
+    const decoded = await jwtToken
+      .decryptToken(token)
+      .then((result) => result.user)
+      .catch((error) => error);
     await Driver.findByIdAndDelete({ _id: decoded._id });
     responseHandler.success(res, "Driver Deleted SuccessFully", 200);
   } catch (error) {
@@ -72,8 +82,13 @@ exports.DeleteDriver = async (req, res) => {
 //Update Current Location
 exports.UpdateUser = async (req, res, next) => {
   try {
-    const authheader = req.get("Authorization");
-    const decoded = await jwtToken.decryptToken(authheader);
+    // const authheader = req.get("Authorization");
+    // const decoded = await jwtToken.decryptToken(authheader);
+    const token = req.headers["authorization"];
+    const decoded = await jwtToken
+      .decryptToken(token)
+      .then((result) => result.user)
+      .catch((error) => error);
     const data = await Driver.findOneAndUpdate(
       { _id: decoded._id },
       {
@@ -108,5 +123,27 @@ exports.UpdateDriverProfilePicture = async (req, res) => {
       error +
         "Error from UpdateDriverProfilePicture API in driver.js file in controllers"
     );
+  }
+};
+
+exports.UpdateDriver = async (req, res, next) => {
+  try {
+    const token = req.headers["authorization"];
+    const decoded = await jwtToken
+      .decryptToken(token)
+      .then((result) => result.user)
+      .catch((error) => error);
+    if (!decoded) {
+      responseHandler.failure(res, "user token is not present.", 400);
+    }
+    await Driver.findOneAndUpdate(
+      { _id: decoded._id },
+      {
+        ...req.body,
+      }
+    );
+    responseHandler.data(res, "Driver update successfully.", 200);
+  } catch (error) {
+    next(error);
   }
 };
