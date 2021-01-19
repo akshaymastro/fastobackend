@@ -5,7 +5,7 @@ const { JWT_SECRET, JWT_EXPIRE_TIME } = process.env;
 const createNewToken = (user) => {
   try {
     const payload = {
-      ...user,
+      user,
     };
 
     const token = JWT.sign(payload, JWT_SECRET, {
@@ -34,7 +34,7 @@ const resetToken = (id, email) => {
 
 const decryptToken = async (token) => {
   try {
-    const decodedToken = await JWT.verify(token, JWT_SECRET);
+    const decodedToken = JWT.verify(token, JWT_SECRET);
     return decodedToken;
   } catch (err) {
     return err;

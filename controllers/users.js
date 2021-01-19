@@ -19,41 +19,46 @@ exports.GetUser = async (req, res) => {
 };
 
 //Update fields
-exports.UpdateFields = async (req, res) => {
+exports.UpdateFields = async (req, res, next) => {
+  console.log(req, "authheader");
+  const authheader = req.get("Authorization");
   try {
-    const authheader = req.get("Authorization");
-    jwt.verify(authheader, jwtSecret, async (err, data) => {
-      if (err) {
-        console.log(err);
-      } else {
-        console.log("data here" + data.completeUser.Mobile);
-        const {
-          firstName,
-          lastName,
-          email,
-          address,
-          state,
-          city,
-          pincode,
-        } = req.body;
-        await User.findOneAndUpdate(
-          { Mobile: data.completeUser.Mobile },
-          {
-            firstName: firstName,
-            lastName: lastName,
-            email: email,
-            address: address,
-            state: state,
-            city: city,
-            pincode: pincode,
-          }
-        ).then((data) => res.send(data));
-      }
-    });
+    const userToken = jwtToken.decryptToken(authheader);
+    console.log(user, "usertoken");
+    if (!userToken) {
+      responseHandler.failure(res, "user is not valid.", 400);
+    } else {
+      const {
+        firstName,
+        lastName,
+        email,
+        address,
+        state,
+        city,
+        pincode,
+      } = req.body;
+      const user = await User.findOneAndUpdate(
+        { Mobile: data.user.Mobile },
+        {
+          firstName: firstName,
+          lastName: lastName,
+          email: email,
+          address: address,
+          state: state,
+          city: city,
+          pincode: pincode,
+        }
+      );
+      // if (!user) {
+      //   responseHandler.failure(res, "user is not update.", 400);
+      // }
+      responseHandler.data(res, user, 200);
+    }
   } catch (error) {
-    console.log(
-      error + "Error from UpdateFields API in user.js file in controllers"
-    );
+    next(error);
+    // console.log(
+    //   error + "Error from UpdateFields API in user.js file in controllers"
+    // );
   }
 };
 
@@ -96,17 +101,17 @@ exports.UpdateCurrentLocation = async (req, res) => {
 
 //Update Profile Picture
 exports.UpdateUser = async (req, res, next) => {
+  console.log(req, "req");
   try {
     const token = req.get("Authorization");
     const decoded = jwtToken.decryptToken(token);
-    console.log(decoded, "decodedd");
-    await User.findOneAndUpdate(
+    const user = await User.findOneAndUpdate(
       { _id: decoded._id },
       {
         ...req.body,
       }
     );
-    responseHandler.success(res, "Profile Picture Updated Successfully", 200);
+    responseHandler.success(res, user, 200);
   } catch (error) {
     next(error);
   }
