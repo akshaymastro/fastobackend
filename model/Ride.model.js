@@ -7,12 +7,26 @@ const rideSchema = new mongoose.Schema({
     ref: "User",
   },
   pickUpLocation: {
-    type: String,
-    required: true,
+    type: {
+      type: String, // Don't do `{ location: { type: String } }`
+      enum: ["Point"], // 'location.type' must be 'Point'
+      required: true,
+    },
+    coordinates: {
+      type: [Number],
+      required: true,
+    },
   },
   dropLocation: {
-    type: String,
-    required: true,
+    type: {
+      type: String, // Don't do `{ location: { type: String } }`
+      enum: ["Point"], // 'location.type' must be 'Point'
+      required: true,
+    },
+    coordinates: {
+      type: [Number],
+      required: true,
+    },
   },
   Kms: {
     type: String,
@@ -34,7 +48,8 @@ const rideSchema = new mongoose.Schema({
     type: Number,
   },
   vehicalSelected: {
-    type: String,
+    type: Schema.Types.ObjectId,
+    ref: "Vehical",
   },
   paymentType: {
     type: String,

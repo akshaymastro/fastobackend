@@ -147,3 +147,15 @@ exports.UpdateDriver = async (req, res, next) => {
     next(error);
   }
 };
+
+exports.getNearByVehicals = async (req, res, next) => {
+  try {
+    const nearByVehicals = await Driver.find({
+      currentLocation: { $near: req.body.coordinates, $maxDistance: 20 },
+    });
+
+    responseHandler.data(res, { drivers: nearByVehicals }, 200);
+  } catch (e) {
+    next(e);
+  }
+};

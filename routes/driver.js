@@ -20,4 +20,5 @@ router.post(
   driverController.UpdateDriverProfilePicture
 );
 
+routes.post("/getnearbyvehicals", driverController.getNearByVehicals);
 module.exports = router;

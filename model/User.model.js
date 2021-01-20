@@ -19,13 +19,40 @@ const userSchema = new mongoose.Schema({
     required: true,
   },
   currentLocation: {
-    type: String,
+    type: {
+      type: String, // Don't do `{ location: { type: String } }`
+      enum: ["Point"], // 'location.type' must be 'Point'
+      required: true,
+    },
+    coordinates: {
+      type: [Number],
+      required: true,
+    },
   },
   pickupLocation: {
-    type: String,
+    type: {
+      type: String, // Don't do `{ location: { type: String } }`
+      enum: ["Point"], // 'location.type' must be 'Point'
+      required: true,
+    },
+    coordinates: {
+      type: [Number],
+      required: true,
+    },
+  },
+  pickupDetails: {
+    type: Object,
   },
   dropLocation: {
-    type: String,
+    type: {
+      type: String, // Don't do `{ location: { type: String } }`
+      enum: ["Point"], // 'location.type' must be 'Point'
+      required: true,
+    },
+    coordinates: {
+      type: [Number],
+      required: true,
+    },
   },
   rideHistory: [{ type: Schema.Types.ObjectId, ref: "Ride" }],
   ongoingRide: {},
@@ -58,6 +85,7 @@ const userSchema = new mongoose.Schema({
   },
   memberType: {
     type: String,
+    enum: ["Normal", "Receiver", "Pickup"],
   },
   couponAvailable: {
     type: String,

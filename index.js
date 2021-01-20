@@ -14,6 +14,8 @@ const rideRouter = require("./routes/ride");
 const ticketRouter = require("./routes/ticket");
 const ticketReplyRouter = require("./routes/ticketReply");
 const authMiddleware = require("./middleware/auth");
+const vehicalRouter = require("./routes/vehical");
+const categoryRouter = require("./routes/category");
 const errorHandler = require("./utils/globalErrorHandler");
 const PORT = process.env.PORT;
 
@@ -32,5 +34,7 @@ app.use("/ride", authMiddleware, rideRouter);
 app.use("/ticket", authMiddleware, ticketRouter);
 app.use("/ticketReply", authMiddleware, ticketReplyRouter);
 app.use("/admin", adminRouter);
+app.use("/category", categoryRouter);
+app.use("/vehical", vehicalRouter);
 app.use(errorHandler);
 app.listen(PORT, () => console.log(`Server is running on ${PORT}`));
