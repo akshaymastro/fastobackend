@@ -5,21 +5,20 @@ const responseHandler = require("../helpers/responseHandler");
 //Create Ride
 exports.CreateRide = async (req, res, next) => {
   try {
-    // const authheader = req.get("Authorization");
-    // const decoded = await jwtToken.decryptToken(authheader);
+    const { pickUpLocation, dropLocation, Kms } = req.body;
     const token = req.headers["authorization"];
     const decoded = await jwtToken
       .decryptToken(token)
       .then((result) => result.user)
       .catch((error) => error);
-    const ride = new Ride();
-    ride.ByUserID = decoded._id;
-    ride.fromLocation = req.body.fromLocation;
-    ride.toLocation = req.body.toLocation;
-    ride.Kms = req.body.Kms;
-    const newride = await ride.save();
-    var saverideintouser = await User.findByIdAndUpdate(decoded._id, {
-      $push: { rideHistory: newride._id },
+    const ride = new Ride({
+      ByUserID: decoded._id,
+      pickUpLocation,
+      dropLocation,
+      Kms,
+    }).save();
+    const saverideintouser = await User.findByIdAndUpdate(decoded._id, {
+      $push: { rideHistory: ride._id },
     });
     responseHandler.data(res, saverideintouser, 200);
   } catch (error) {
@@ -30,8 +29,6 @@ exports.CreateRide = async (req, res, next) => {
 //Delete Ride
 exports.DeleteRide = async (req, res) => {
   try {
-    // const authheader = req.get("Authorization");
-    // const decoded = await jwtToken.decryptToken(authheader);
     const token = req.headers["authorization"];
     const decoded = await jwtToken
       .decryptToken(token)

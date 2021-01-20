@@ -4,13 +4,13 @@ const Schema = mongoose.Schema;
 const rideSchema = new mongoose.Schema({
   ByUserID: {
     type: Schema.Types.ObjectId,
-    ref: 'User'
+    ref: "User",
   },
-  fromLocation: {
+  pickUpLocation: {
     type: String,
     required: true,
   },
-  toLocation: {
+  dropLocation: {
     type: String,
     required: true,
   },
@@ -19,59 +19,59 @@ const rideSchema = new mongoose.Schema({
     required: true,
   },
   goodType: {
-    type: String
+    type: String,
   },
   pickupName: {
-    type: String
+    type: String,
   },
   pickupNumber: {
-    type: Number
+    type: Number,
   },
   dropName: {
-    type: String
+    type: String,
   },
   dropNumber: {
-    type: Number
+    type: Number,
   },
   vehicalSelected: {
-    type: String
+    type: String,
   },
   paymentType: {
-    type: String
+    type: String,
   },
   paymentId: {
     type: String,
   },
   orderStatus: {
-    type: String
+    type: String,
   },
   createdAt: {
     type: String,
   },
   couponApplied: {
-    type: String
+    type: String,
   },
   AcceptedByDriverID: {
-    type: String
+    type: String,
   },
   AcceptedAt: {
-    type: String
+    type: String,
   },
   PickedUpAt: {
-    type: String
+    type: String,
   },
   DroppedAt: {
-    type: String
+    type: String,
   },
   rating: {
-    type: String
+    type: String,
   },
   comment: {
-    type: String
+    type: String,
   },
   suggestion: {
-    type: String
-  }
+    type: String,
+  },
 });
 
 const Ride = mongoose.model("Ride", rideSchema);

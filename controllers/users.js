@@ -5,6 +5,7 @@ const { jwtsecret } = process.env;
 const jwt = require("jsonwebtoken");
 const jwtToken = require("../helpers/jwt");
 const responseHandler = require("../helpers/responseHandler");
+const { transporter, mailOptions } = require("../helpers/mailVerification");
 
 exports.GetUser = async (req, res) => {
   try {
@@ -70,9 +71,6 @@ exports.DeleteUser = async (req, res, next) => {
       .decryptToken(token)
       .then((result) => result.user)
       .catch((error) => error);
-    if (!decoded) {
-      responseHandler.failure(res, "user token is not present.", 400);
-    }
 
     await User.findByIdAndDelete({ _id: decoded._id });
     responseHandler.success(res, "User Deleted SuccessFully", 200);
@@ -89,9 +87,7 @@ exports.UpdateCurrentLocation = async (req, res, next) => {
       .decryptToken(token)
       .then((result) => result.user)
       .catch((error) => error);
-    if (!decoded) {
-      responseHandler.failure(res, "user token is not present.", 400);
-    }
+
     const { currentLocation } = req.body;
     const data = await User.findOneAndUpdate(
       { _id: decoded._id },
@@ -117,9 +113,6 @@ exports.UpdateUser = async (req, res, next) => {
       .decryptToken(token)
       .then((result) => result.user)
       .catch((error) => error);
-    if (!decoded) {
-      responseHandler.failure(res, "user token is not present.", 400);
-    }
     await User.findOneAndUpdate(
       { _id: decoded._id },
       {
@@ -127,6 +120,54 @@ exports.UpdateUser = async (req, res, next) => {
       }
     );
     responseHandler.data(res, "user update successfully.", 200);
+  } catch (error) {
+    next(error);
+  }
+};
+
+exports.EmailVerification = async (req, res, next) => {
+  try {
+    const { email } = req.body;
+    const token = req.headers["authorization"];
+    const decoded = await jwtToken
+      .decryptToken(token)
+      .then((result) => result.user)
+      .catch((error) => error);
+    const emailToken = await jwtToken.createNewToken(decoded);
+    const user = await User.findOneAndUpdate(
+      { _id: decoded._id },
+      { email, emailToken }
+    );
+    if (!user) {
+      responseHandler.failure(res, "user is not present.", 400);
+    }
+    const eailOptions = await mailOptions(email);
+    const response = transporter.sendMail(eailOptions);
+    if (!response) {
+      responseHandler.failure(res, "sending mail error.", 400);
+    }
+    responseHandler.success(
+      res,
+      "link send to your email by click that you can verify your mail",
+      200
+    );
+  } catch (error) {
+    next(error);
+  }
+};
+
+exports.Verification = async (req, res, next) => {
+  try {
+    const { emailToken } = req.query;
+    const user = await User.findOneAndUpdate(
+      { emailToken },
+      { isEmailVerified: true, emailToken: null }
+    );
+    if (!user) {
+      responseHandler.failure(res, "user is not present.", 400);
+    }
+
+    responseHandler.success(res, "your email is verified.", 200);
   } catch (error) {
     next(error);
   }

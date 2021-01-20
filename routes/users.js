@@ -17,4 +17,8 @@ router.post("/updatecurrentlocation", userController.UpdateCurrentLocation);
 //Route to update profile picture url of uploaded image
 router.patch("/updateUser", userController.UpdateUser);
 
+router.patch("/emailVerification", userController.EmailVerification);
+
+router.patch("/verify", userController.Verification);
+
 module.exports = router;

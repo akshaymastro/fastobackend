@@ -7,7 +7,6 @@ const dotenv = require("dotenv");
 dotenv.config();
 const connectDB = require("./settings/connectDB");
 const bodyParser = require("body-parser");
-const errorHanlder = require("./utils/globalErrorHandlers");
 const userRouter = require("./routes/users");
 const authRouter = require("./routes/auth");
 const adminRouter = require("./routes/admin");

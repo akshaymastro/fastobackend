@@ -3,64 +3,71 @@ const Schema = mongoose.Schema;
 
 const userSchema = new mongoose.Schema({
   firstName: {
-    type: String
+    type: String,
   },
   lastName: {
-    type: String
+    type: String,
   },
   userName: {
-    type: String
+    type: String,
   },
   email: {
-    type: String
+    type: String,
   },
   Mobile: {
     type: Number,
     required: true,
   },
   currentLocation: {
-    type: String
+    type: String,
   },
   pickupLocation: {
-    type: String
+    type: String,
   },
   dropLocation: {
-    type: String
+    type: String,
   },
-  rideHistory:[{type: Schema.Types.ObjectId, ref:'Ride'}],
+  rideHistory: [{ type: Schema.Types.ObjectId, ref: "Ride" }],
   ongoingRide: {},
-  userTicket: [{type: Schema.Types.ObjectId, ref:'Ticket'}],
-  chatSupport: [{type: Schema.Types.ObjectId, ref:'Chat'}],
+  userTicket: [{ type: Schema.Types.ObjectId, ref: "Ticket" }],
+  chatSupport: [{ type: Schema.Types.ObjectId, ref: "Chat" }],
   userNofifications: [{}],
   userInvoice: [{}],
   walletMoney: {
-    type: String
+    type: String,
   },
   offerGiven: [{}],
   offerUsed: [{}],
   token: {
-    type: String
+    type: String,
   },
   dp: {
-    type: String
+    type: String,
   },
   address: {
-    type: String
+    type: String,
   },
   state: {
-    type: String
+    type: String,
   },
   city: {
-    type: String
+    type: String,
   },
   pincode: {
-    type: Number
+    type: Number,
   },
   memberType: {
-    type: String
+    type: String,
   },
   couponAvailable: {
-    type: String
+    type: String,
+  },
+  isEmailVerified: {
+    type: Boolean,
+    default: false,
+  },
+  emailToken: {
+    type: String,
   },
 });
 
