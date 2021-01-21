@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
+const geocoder = require("../utils/geocoder");
 
 const userSchema = new mongoose.Schema({
   firstName: {
@@ -53,6 +54,7 @@ const userSchema = new mongoose.Schema({
       type: [Number],
       required: true,
     },
+    formattedAddress: String,
   },
   rideHistory: [{ type: Schema.Types.ObjectId, ref: "Ride" }],
   ongoingRide: {},
@@ -97,6 +99,17 @@ const userSchema = new mongoose.Schema({
   emailToken: {
     type: String,
   },
+});
+
+userSchema.pre("save", async function (next) {
+  const loc = await geocoder.geocode(this.address);
+  this.currentLocation = {
+    type: "Point",
+    coordinates: [loc[0].longitude, loc[0].latitude],
+    formattedAddress: loc[0].formattedAddress,
+  };
+  this.address = undefined;
+  next();
 });
 
 const User = mongoose.model("User", userSchema);

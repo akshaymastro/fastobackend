@@ -1,7 +1,6 @@
 const User = require("../model/User.model");
 const bcrypt = require("bcrypt");
 // const jwtSecret = require("../config/jwtSecret");
-const { jwtsecret } = process.env;
 const jwt = require("jsonwebtoken");
 const jwtToken = require("../helpers/jwt");
 const responseHandler = require("../helpers/responseHandler");
@@ -21,40 +20,37 @@ exports.GetUser = async (req, res) => {
 
 //Update fields
 exports.UpdateFields = async (req, res, next) => {
-  console.log(req, "authheader");
-  const authheader = req.get("Authorization");
+  const token = req.headers["authorization"];
   try {
-    const userToken = jwtToken.decryptToken(authheader);
-    console.log(user, "usertoken");
-    if (!userToken) {
-      responseHandler.failure(res, "user is not valid.", 400);
-    } else {
-      const {
-        firstName,
-        lastName,
-        email,
-        address,
-        state,
-        city,
-        pincode,
-      } = req.body;
-      const user = await User.findOneAndUpdate(
-        { Mobile: data.user.Mobile },
-        {
-          firstName: firstName,
-          lastName: lastName,
-          email: email,
-          address: address,
-          state: state,
-          city: city,
-          pincode: pincode,
-        }
-      );
-      // if (!user) {
-      //   responseHandler.failure(res, "user is not update.", 400);
-      // }
-      responseHandler.data(res, user, 200);
-    }
+    const decoded = await jwtToken
+      .decryptToken(token)
+      .then((result) => result.user)
+      .catch((error) => error);
+    const {
+      firstName,
+      lastName,
+      email,
+      address,
+      state,
+      city,
+      pincode,
+    } = req.body;
+    const user = await User.findOneAndUpdate(
+      { Mobile: decoded.Mobile },
+      {
+        firstName: firstName,
+        lastName: lastName,
+        email: email,
+        address: address,
+        state: state,
+        city: city,
+        pincode: pincode,
+      }
+    );
+    // if (!user) {
+    //   responseHandler.failure(res, "user is not update.", 400);
+    // }
+    responseHandler.data(res, user, 200);
   } catch (error) {
     next(error);
     // console.log(
@@ -134,6 +130,8 @@ exports.EmailVerification = async (req, res, next) => {
       .then((result) => result.user)
       .catch((error) => error);
     const emailToken = await jwtToken.createNewToken(decoded);
+    const host = req.get("host");
+    const link = "http://" + host + "/verify?emailToken=" + emailToken;
     const user = await User.findOneAndUpdate(
       { _id: decoded._id },
       { email, emailToken }
@@ -148,7 +146,9 @@ exports.EmailVerification = async (req, res, next) => {
     }
     responseHandler.success(
       res,
-      "link send to your email by click that you can verify your mail",
+      "Hello,<br> Please Click on the link to verify your email.<br><a href=" +
+        link +
+        ">Click here to verify</a>",
       200
     );
   } catch (error) {

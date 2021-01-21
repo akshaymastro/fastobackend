@@ -18,7 +18,7 @@ exports.updateCategory = async (req, res, next) => {
       { ...req.body }
     );
     console.log(updatedCategory, "vehicall");
-    responseHandler.success(res, "Category Updated SuccesFully");
+    responseHandler.success(res, "Category Updated SuccesFully", 200);
   } catch (e) {
     next(e);
   }
