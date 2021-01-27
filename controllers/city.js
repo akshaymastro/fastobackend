@@ -3,7 +3,7 @@ const responseHelper = require("../helpers/response");
 
 exports.createCity = async (req, res, next) => {
   try {
-    const city = await City.save(req.body);
+    const city = await new City(req.body).save();
     responseHelper.success(res, "City created SuccessFully", 200);
   } catch (e) {
     next(e);
@@ -23,6 +23,16 @@ exports.deleteCity = async (req, res, next) => {
   try {
     await City.deleteOne({ _id: req.body._id });
     responseHelper.success(res, "City Deleted SuccessFully", 200);
+  } catch (e) {
+    next(e);
+  }
+};
+
+exports.getCities = async (req, res, next) => {
+  try {
+    let allcities = await City.find({});
+
+    responseHelper.data(res, allcities, 200);
   } catch (e) {
     next(e);
   }

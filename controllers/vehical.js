@@ -18,7 +18,7 @@ exports.updateVehical = async (req, res, next) => {
       { ...req.body }
     );
     console.log(updateVehical, "vehicall");
-    responseHandler.success(res, "Vehical Updated SuccesFully");
+    responseHandler.success(res, "Vehical Updated SuccesFully", 200);
   } catch (e) {
     next(e);
   }
