@@ -5,6 +5,8 @@ const router = express.Router();
 //Route to get all drivers
 router.get("/getdriver", driverController.getDriver);
 
+router.get("/getdrivers", driverController.getDrivers);
+
 //Route to update fields of logged in drivers
 router.post("/updatedriverfields", driverController.UpdateDriverFields);
 
@@ -20,5 +22,5 @@ router.post(
   driverController.UpdateDriverProfilePicture
 );
 
-routes.post("/getnearbyvehicals", driverController.getNearByVehicals);
+router.post("/getnearbyvehicals", driverController.getNearByVehicals);
 module.exports = router;

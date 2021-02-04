@@ -17,6 +17,9 @@ const vehicalSchema = new mongoose.Schema({
   vehical_price: {
     type: Number,
   },
+  vehical_KM: {
+    type: Number,
+  },
   vehical_image: {
     type: String,
   },

@@ -2,6 +2,53 @@ const User = require("../model/User.model");
 const Ride = require("../model/Ride.model");
 const jwtToken = require("../helpers/jwt");
 const responseHandler = require("../helpers/responseHandler");
+
+exports.GetUserRide = async (req, res, next) => {
+  try {
+    const { rideId } = req.query;
+    const token = req.headers["authorization"];
+    const decoded = await jwtToken
+      .decryptToken(token)
+      .then((result) => result.user)
+      .catch((error) => error);
+    const rides = await Ride.findOne({ ByUserID: decoded._id, _id: rideId });
+    if (!rides) {
+      responseHandler.failure(res, "no ride is avalable.", 400);
+    }
+    responseHandler.data(res, rides, 200);
+  } catch (error) {
+    next(error);
+  }
+};
+
+exports.GetUserRideList = async (req, res, next) => {
+  try {
+    const token = req.headers["authorization"];
+    const decoded = await jwtToken
+      .decryptToken(token)
+      .then((result) => result.user)
+      .catch((error) => error);
+    const rides = await Ride.find({ ByUserID: decoded._id });
+    if (!rides) {
+      responseHandler.failure(res, "no ride is avalable.", 400);
+    }
+    responseHandler.data(res, rides, 200);
+  } catch (error) {
+    next(error);
+  }
+};
+
+exports.GetRideList = async (req, res, next) => {
+  try {
+    const rides = await Ride.find();
+    if (!rides) {
+      responseHandler.failure(res, "no ride is avalable.", 400);
+    }
+    responseHandler.data(res, rides, 200);
+  } catch (error) {
+    next(error);
+  }
+};
 //Create Ride
 exports.CreateRide = async (req, res, next) => {
   try {

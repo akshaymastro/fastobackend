@@ -9,12 +9,25 @@ const { transporter, mailOptions } = require("../helpers/mailVerification");
 exports.GetUser = async (req, res) => {
   try {
     const { Mobile } = req.body;
-    await User.findOne({ Mobile: Mobile }).then((Response) => {
-      res.send(Response);
-      console.log(Response);
-    });
+    const user = await User.findOne({ Mobile: Mobile });
+    if (!user) {
+      responseHandler.failure(res, "user not avalable.", 400);
+    }
+    responseHandler.data(res, users, 200);
   } catch (err) {
-    console.log(err);
+    next(err);
+  }
+};
+
+exports.GetUsers = async (req, res, next) => {
+  try {
+    const users = await User.find();
+    if (!users) {
+      responseHandler.failure(res, "users list not avalable.", 400);
+    }
+    responseHandler.data(res, users, 200);
+  } catch (err) {
+    next(err);
   }
 };
 

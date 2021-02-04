@@ -3,7 +3,7 @@ const responseHandler = require("../helpers/responseHandler");
 
 exports.createVehical = async (req, res, next) => {
   try {
-    const newVehical = await VehicalModel.save(req.body);
+    const newVehical = await VehicalModel(req.body).save();
     console.log(newVehical);
     responseHandler.success(res, "Vehical Created SuccesFully", 200);
   } catch (e) {

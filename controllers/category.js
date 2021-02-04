@@ -1,17 +1,17 @@
 const CategoryModel = require("../model/Category.model");
 const responseHandler = require("../helpers/responseHandler");
 
-exports.createCategory = async (req, res, next) => {
+exports.create = async (req, res, next) => {
+  console.log(req);
   try {
-    const newCategory = await CategoryModel.save(req.body);
-    console.log(newCategory);
+    const newCategory = await CategoryModel(req.body).save();
     responseHandler.success(res, "Category Created SuccesFully", 200);
   } catch (e) {
     next(e);
   }
 };
 
-exports.updateCategory = async (req, res, next) => {
+exports.update = async (req, res, next) => {
   try {
     const updatedCategory = await CategoryModel.updateOne(
       { _id: req.params.id },
@@ -24,7 +24,7 @@ exports.updateCategory = async (req, res, next) => {
   }
 };
 
-exports.deleteCategory = async (req, res, next) => {
+exports.delete = async (req, res, next) => {
   try {
     await CategoryModel.deleteOne({
       _id: req.params.id,
@@ -34,9 +34,18 @@ exports.deleteCategory = async (req, res, next) => {
   }
 };
 
-exports.getCategories = async (req, res, next) => {
+exports.get = async (req, res, next) => {
   try {
     const categories = await CategoryModel.find();
+    responseHandler.data(res, categories, 200);
+  } catch (e) {
+    next(e);
+  }
+};
+
+exports.getById = async (req, res, next) => {
+  try {
+    const categories = await CategoryModel.findOne({ _id: req.body.id });
     responseHandler.data(res, categories, 200);
   } catch (e) {
     next(e);

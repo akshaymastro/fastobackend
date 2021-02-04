@@ -6,7 +6,9 @@ const router = express.Router();
 router.post("/updatefields", userController.UpdateFields);
 
 //Route to update fields of logged in user
-router.post("/getuser", userController.GetUser);
+router.get("/getuser", userController.GetUser);
+
+router.get("/userslist", userController.GetUsers);
 
 //Route to delete user
 router.post("/deleteuser", userController.DeleteUser);
