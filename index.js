@@ -14,6 +14,8 @@ const ticketRouter = require("./routes/ticket");
 const ticketReplyRouter = require("./routes/ticketReply");
 const authMiddleware = require("./middleware/auth");
 const vehicalRouter = require("./routes/vehical");
+const offerRouter = require("./routes/offer");
+
 const paymentRoute = require("./routes/payment");
 const categoryRouter = require("./routes/category");
 const cityRouter = require("./routes/city");
@@ -40,6 +42,8 @@ app.use("/admin", adminRouter);
 app.use("/city", cityRouter);
 app.use("/category", authMiddleware, categoryRouter);
 app.use("/vehical", authMiddleware, vehicalRouter);
+app.use("/offer", authMiddleware, offerRouter);
+
 app.use("/payment", authMiddleware, paymentRoute);
 app.use(errorHandler);
 app.listen(PORT, () => console.log(`Server is running on ${PORT}`));

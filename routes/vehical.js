@@ -17,4 +17,4 @@ router.patch(
 
 router.delete("/deleteVehical/:id", VehicalController.deleteVehical);
 
-module.exports = router;
+module.exports = router;0
