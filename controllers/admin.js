@@ -1,6 +1,10 @@
 const User = require("../model/User.model");
 const City = require("../model/city.model");
-const responseHelper = require("../helpers/response");
+const Admin = require("../model/Admin.model");
+const bcrypt = require("bcrypt");
+const responseHandler = require("../helpers/responseHandler");
+const jwtToken = require("../helpers/jwt");
+const adminValidator = require("../validators/adminValidator");
 
 exports.GetAllUsers = async (req, res) => {
   try {
@@ -21,5 +25,62 @@ exports.GetAllCities = async (req, res, next) => {
     return responseHelper.data(res, data, 200);
   } catch (e) {
     next(e);
+  }
+};
+
+exports.adminlogin = async (req, res, next) => {
+  try {
+    const userForm = await adminValidator.login.validateAsync(req.body);
+    const { email, password } = userForm;
+    const admin = await Admin.findOne({ email });
+    if (!admin) {
+      responseHandler.failure(res, `admin is not register.`, 400);
+    }
+    const passwordMatch = await bcrypt.compare(password, admin.password);
+    if (!passwordMatch) {
+      responseHandler.failure(res, `Password is inncorrect.`, 400);
+    }
+    const token = await jwtToken.createNewToken(admin);
+    responseHandler.token(res, token, 200);
+  } catch (err) {
+    next(err);
+  }
+};
+
+exports.adminCreate = async (req, res, next) => {
+  try {
+    const userForm = await adminValidator.register.validateAsync(req.body);
+    const { email } = userForm;
+    const admin = await Admin.findOne({ email });
+
+    if (admin) {
+      return responseHandler.failure(res, "user is already register.", 400);
+    }
+
+    await new Admin(userForm).save();
+    responseHandler.success(res, `admin created successfully`, 200);
+  } catch (err) {
+    next(err);
+  }
+};
+
+exports.adminDelete = async (req, res, next) => {
+  try {
+    await Admin.deleteOne({ _id: req.body.id });
+    responseHandler.success(res, `admin delete successfully`, 200);
+  } catch (err) {
+    next(err);
+  }
+};
+
+exports.adminList = async (req, res, next) => {
+  try {
+    const admin = await Admin.find();
+    if (!admin) {
+      responseHandler.failure(res, "user is already register.", 400);
+    }
+    responseHandler.data(res, admin, 200);
+  } catch (err) {
+    next(err);
   }
 };

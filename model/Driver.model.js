@@ -109,11 +109,23 @@ const driverSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  driverCategory: {
+    type: String,
+    required: true,
+  },
+  driverInsurance: {
+    type: String,
+    required: true,
+  },
   driverNCR: {
     type: String,
     required: true,
   },
   activeStatus: {
+    type: String,
+    required: true,
+  },
+  totalKM: {
     type: String,
     required: true,
   },

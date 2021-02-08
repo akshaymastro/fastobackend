@@ -5,16 +5,29 @@ const jwt = require("jsonwebtoken");
 const jwtToken = require("../helpers/jwt");
 const responseHandler = require("../helpers/responseHandler");
 
-exports.getDriver = async (req, res) => {
-  const driverFromDB = await Driver.find({});
-  const driverWithoutPassword = driverFromDB.map(
-    ({ email, firstName, lastName }) => ({
-      email,
-      firstName,
-      lastName,
-    })
-  );
-  return res.json({ driverWithoutPassword });
+exports.getDriver = async (req, res, next) => {
+  const { Mobile } = req.body;
+  try {
+    const drivers = await Driver.findOne({ Mobile });
+    if (!drivers) {
+      responseHandler.failure(res, "drivers list not avalable.", 400);
+    }
+    responseHandler.data(res, drivers, 200);
+  } catch (err) {
+    next(err);
+  }
+};
+
+exports.getDrivers = async (req, res, next) => {
+  try {
+    const drivers = await Driver.find({});
+    if (!drivers) {
+      responseHandler.failure(res, "drivers list not avalable.", 400);
+    }
+    responseHandler.data(res, drivers, 200);
+  } catch (err) {
+    next(err);
+  }
 };
 
 //Update fields

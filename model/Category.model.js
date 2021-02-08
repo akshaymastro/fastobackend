@@ -5,10 +5,10 @@ const goodCategorySchema = new mongoose.Schema({
     type: String,
   },
   category_image: {
-    type: String,
+    type: Array,
   },
 });
 
-const Offer = mongoose.model("Offer", goodCategorySchema);
+const GoodsType = mongoose.model("GoodsType", goodCategorySchema);
 
-module.exports = Offer;
+module.exports = GoodsType;

@@ -41,10 +41,10 @@ const rideSchema = new mongoose.Schema({
   pickupNumber: {
     type: Number,
   },
-  dropName: {
+  receivrName: {
     type: String,
   },
-  dropNumber: {
+  receivrNumber: {
     type: Number,
   },
   vehicalSelected: {
@@ -75,7 +75,7 @@ const rideSchema = new mongoose.Schema({
   PickedUpAt: {
     type: String,
   },
-  DroppedAt: {
+  RecivedAt: {
     type: String,
   },
   rating: {
@@ -85,6 +85,12 @@ const rideSchema = new mongoose.Schema({
     type: String,
   },
   suggestion: {
+    type: String,
+  },
+  status: {
+    type: String,
+  },
+  otp: {
     type: String,
   },
 });
