@@ -3,7 +3,7 @@ const responseHandler = require("../helpers/responseHandler");
 
 exports.createOffer = async (req, res, next) => {
   try {
-    const newOffer = awaitOfferModel.save(req.body);
+    const newOffer = await OfferModel(req.body).save();
     console.log(newOffer);
     responseHandler.success(res, "OfferCreated SuccesFully", 200);
   } catch (e) {
@@ -29,6 +29,7 @@ exports.deleteOffer = async (req, res, next) => {
     await OfferModel.deleteOne({
       _id: req.params.id,
     });
+    responseHandler.success(res, "Offer Deleted SuccessFully", 200);
   } catch (e) {
     next(e);
   }

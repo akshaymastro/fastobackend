@@ -12,7 +12,7 @@ router.post(
 router.patch(
   "/updateoffer/:id",
   [multer().any("offer_image")],
-  OfferController.OfferController
+  OfferController.updateOffer
 );
 
 router.delete("/deleteOffer/:id", OfferController.deleteOffer);

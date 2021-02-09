@@ -16,7 +16,7 @@ const ticketReplyRouter = require("./routes/ticketReply");
 const authMiddleware = require("./middleware/auth");
 const vehicalRouter = require("./routes/vehical");
 const offerRouter = require("./routes/offer");
-
+const categoryRouter = require("./routes/category");
 const paymentRoute = require("./routes/payment");
 const goodsRouter = require("./routes/category");
 const imageRouter = require("./routes/image");
@@ -44,9 +44,9 @@ app.use("/ticketReply", authMiddleware, ticketReplyRouter);
 app.use("/admin", adminRouter);
 app.use("/image", imageRouter);
 app.use("/city", cityRouter);
-app.use("/category", authMiddleware, categoryRouter);
+app.use("/category", categoryRouter);
 app.use("/vehical", authMiddleware, vehicalRouter);
-app.use("/offer", authMiddleware, offerRouter);
+app.use("/offer", offerRouter);
 
 app.use("/goodsType", goodsRouter);
 app.use("/payment", authMiddleware, paymentRoute);

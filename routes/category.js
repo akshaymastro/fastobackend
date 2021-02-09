@@ -6,9 +6,17 @@ const router = express.Router();
 
 router.get("/", CategoryController.get);
 router.get("/:id", CategoryController.getById);
-router.post("/", upload.single("image"), CategoryController.create);
-router.patch("/:id", CategoryController.update);
+router.post(
+  "/newgoodtype",
+  upload.single("category_image"),
+  CategoryController.create
+);
+router.patch(
+  "/updategoodtype/:id",
+  upload.single("category_image"),
+  CategoryController.update
+);
 
-router.delete("/:id", CategoryController.delete);
+router.delete("/deletegoodtype/:id", CategoryController.delete);
 
 module.exports = router;

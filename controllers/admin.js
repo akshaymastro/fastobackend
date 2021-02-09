@@ -66,7 +66,7 @@ exports.adminCreate = async (req, res, next) => {
 
 exports.adminDelete = async (req, res, next) => {
   try {
-    await Admin.deleteOne({ _id: req.body.id });
+    await Admin.deleteOne({ _id: req.params.id });
     responseHandler.success(res, `admin delete successfully`, 200);
   } catch (err) {
     next(err);

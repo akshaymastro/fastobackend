@@ -29,6 +29,7 @@ exports.delete = async (req, res, next) => {
     await CategoryModel.deleteOne({
       _id: req.params.id,
     });
+    responseHandler.success(res, "Good Delete SuccessFully", 200);
   } catch (e) {
     next(e);
   }
