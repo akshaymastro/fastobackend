@@ -9,7 +9,8 @@ module.exports = async (req, res, next) => {
       responseHandler.failure(res, "missing header authorization.", 400);
     }
 
-    await jwtToken.decryptToken(authheader);
+    const decodedToken = await jwtToken.decryptToken(authheader);
+    req.user = decodedToken;
     next();
   } catch (error) {
     return responseHandler.failure(res, error, 400);

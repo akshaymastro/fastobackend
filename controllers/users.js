@@ -8,12 +8,13 @@ const { transporter, mailOptions } = require("../helpers/mailVerification");
 
 exports.GetUser = async (req, res) => {
   try {
+    console.log(req.user, "userr");
     const { Mobile } = req.body;
-    const user = await User.findOne({ Mobile: Mobile });
-    if (!user) {
+    const user1 = await User.findOne({ Mobile: req.user.user.Mobile });
+    if (!user1) {
       responseHandler.failure(res, "user not avalable.", 400);
     }
-    responseHandler.data(res, users, 200);
+    responseHandler.data(res, user1, 200);
   } catch (err) {
     next(err);
   }
@@ -39,15 +40,8 @@ exports.UpdateFields = async (req, res, next) => {
       .decryptToken(token)
       .then((result) => result.user)
       .catch((error) => error);
-    const {
-      firstName,
-      lastName,
-      email,
-      address,
-      state,
-      city,
-      pincode,
-    } = req.body;
+    const { firstName, lastName, email, address, state, city, pincode } =
+      req.body;
     const user = await User.findOneAndUpdate(
       { Mobile: decoded.Mobile },
       {

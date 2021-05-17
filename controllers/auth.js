@@ -9,7 +9,7 @@ const axios = require("axios");
 exports.GetUser = async (req, res, next) => {
   try {
     const { Mobile } = req.body;
-    const user = await User.findOne({ Mobile: Mobile });
+    const user = await User.findOne({ Mobile: req.user.user.Mobile });
     responseHandler.data(res, user, 200);
   } catch (err) {
     next(err);
@@ -18,17 +18,24 @@ exports.GetUser = async (req, res, next) => {
 
 //Login Passenger
 exports.loginUser = async (req, res, next) => {
-  const { Mobile } = req.body;
+  const { Mobile, Otp } = req.body;
   try {
     const user = await User.findOne({ Mobile });
-
-    if (user) {
+    console.log(otp, "otppspspsp");
+    console.log(user.otp === Otp, "otp check");
+    if (user.otp === Otp) {
       const token = await jwtToken.createNewToken(user);
-      responseHandler.token(res, token, 200);
+      responseHandler.data(
+        res,
+        {
+          token,
+          is_profileUpdated: user.is_profileUpdated,
+          new_user: user.is_profileUpdated == true ? false : true,
+        },
+        200
+      );
     } else {
-      const Newuser = new User({ Mobile }).save();
-      const token = await jwtToken.createNewToken(Newuser);
-      responseHandler.token(res, token, 200);
+      throw Error("Otp is Incorrect");
     }
   } catch (err) {
     next(err);
@@ -71,8 +78,18 @@ exports.SendOTP = async (req, res, next) => {
     sentotp = Object.assign({
       otp: GeneratedOtp,
     });
-
-    responseHandler.data(res, sentotp, 200);
+    console.log(Mobile, "Mobileee");
+    const user = await User.findOne({ Mobile });
+    console.log(user);
+    if (!user) {
+      new User({ Mobile, otp: GeneratedOtp }).save();
+    } else {
+      const updateUser = await User.updateOne(
+        { Mobile },
+        { otp: GeneratedOtp }
+      );
+    }
+    responseHandler.data(res, { otp: GeneratedOtp }, 200);
   } catch (err) {
     next(err);
   }

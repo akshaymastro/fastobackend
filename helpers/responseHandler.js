@@ -2,28 +2,28 @@
 
 const success = (res, message, code) => {
   res.status(code).json({
-    is_success: true,
+    isSuccess: true,
     message: message,
     responseCode: code,
   });
 };
 const data = (res, item, code) => {
   res.status(code).json({
-    is_success: true,
+    isSuccess: true,
     data: item,
     responseCode: code,
   });
 };
 const token = (res, item, code) => {
   res.status(code).json({
-    is_success: true,
+    isSuccess: true,
     token: item,
     responseCode: code,
   });
 };
 const failure = (res, error, code) => {
   res.status(code).json({
-    is_success: false,
+    isSuccess: false,
     message: error.message ? error.message : error,
     responseCode: code,
   });
@@ -31,7 +31,7 @@ const failure = (res, error, code) => {
 
 const page = (res, items, total, page_no, code) => {
   res.status(code).json({
-    is_success: true,
+    isSuccess: true,
     data: {
       items: items,
       skip: page_no || 0,

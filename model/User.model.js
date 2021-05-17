@@ -9,6 +9,10 @@ const userSchema = new mongoose.Schema({
   lastName: {
     type: String,
   },
+  is_profileUpdated: {
+    type: Boolean,
+    default: false,
+  },
   userName: {
     type: String,
   },
@@ -23,22 +27,18 @@ const userSchema = new mongoose.Schema({
     type: {
       type: String, // Don't do `{ location: { type: String } }`
       enum: ["Point"], // 'location.type' must be 'Point'
-      required: true,
     },
     coordinates: {
       type: [Number],
-      required: true,
     },
   },
   pickupLocation: {
     type: {
       type: String, // Don't do `{ location: { type: String } }`
       enum: ["Point"], // 'location.type' must be 'Point'
-      required: true,
     },
     coordinates: {
       type: [Number],
-      required: true,
     },
   },
   pickupDetails: {
@@ -48,11 +48,9 @@ const userSchema = new mongoose.Schema({
     type: {
       type: String, // Don't do `{ location: { type: String } }`
       enum: ["Point"], // 'location.type' must be 'Point'
-      required: true,
     },
     coordinates: {
       type: [Number],
-      required: true,
     },
     formattedAddress: String,
   },
@@ -64,6 +62,9 @@ const userSchema = new mongoose.Schema({
   userInvoice: [{}],
   walletMoney: {
     type: String,
+  },
+  otp: {
+    type: Number,
   },
   offerGiven: [{}],
   offerUsed: [{}],
@@ -102,13 +103,13 @@ const userSchema = new mongoose.Schema({
 });
 
 userSchema.pre("save", async function (next) {
-  const loc = await geocoder.geocode(this.address);
-  this.currentLocation = {
-    type: "Point",
-    coordinates: [loc[0].longitude, loc[0].latitude],
-    formattedAddress: loc[0].formattedAddress,
-  };
-  this.address = undefined;
+  // const loc = await geocoder.geocode(this.address);
+  // this.currentLocation = {
+  //   type: "Point",
+  //   coordinates: [loc[0].longitude, loc[0].latitude],
+  //   formattedAddress: loc[0].formattedAddress,
+  // };
+  // this.address = undefined;
   next();
 });
 
