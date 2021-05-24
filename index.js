@@ -23,7 +23,7 @@ const imageRouter = require("./routes/image");
 const cityRouter = require("./routes/city");
 const errorHandler = require("./utils/globalErrorHandler");
 const userController = require("./controllers/users");
-const { PORT } = process.env;
+const { PORT } = process.env ;
 
 connectDB()
   .then(() => console.log("Connected to Mongodb..."))
@@ -33,6 +33,7 @@ app.use(helmet());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json({ limit: "20mb" }));
 app.use(cors());
+//app.listen(5681);
 
 app.use("/auth", authRouter);
 app.use("/users", userRouter);

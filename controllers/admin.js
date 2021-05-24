@@ -55,6 +55,7 @@ exports.adminCreate = async (req, res, next) => {
 
     if (admin) {
       return responseHandler.failure(res, "user is already register.", 400);
+      console.log(res);
     }
 
     await new Admin(userForm).save();

@@ -2,15 +2,16 @@ const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
 const rideSchema = new mongoose.Schema({
-  ByUserID: {
-    type: Schema.Types.ObjectId,
-    ref: "User",
-  },
+   ByUserID: {
+ type:Schema.Types.ObjectId,
+ref:"User"
+    // type:String
+   },
   pickUpLocation: {
     type: {
       type: String, // Don't do `{ location: { type: String } }`
-      enum: ["Point"], // 'location.type' must be 'Point'
-      required: true,
+     //enum: ["Point"], // 'location.type' must be 'Point'
+      //required: true,
     },
     coordinates: {
       type: [Number],
@@ -20,17 +21,17 @@ const rideSchema = new mongoose.Schema({
   dropLocation: {
     type: {
       type: String, // Don't do `{ location: { type: String } }`
-      enum: ["Point"], // 'location.type' must be 'Point'
-      required: true,
+      //enum: ["Point"], // 'location.type' must be 'Point'
+      //required: true,
     },
     coordinates: {
       type: [Number],
-      required: true,
+      //required: true,
     },
   },
   Kms: {
     type: String,
-    required: true,
+   //required: true,
   },
   goodType: {
     type: String,
@@ -47,6 +48,9 @@ const rideSchema = new mongoose.Schema({
   receivrNumber: {
     type: Number,
   },
+Driver:{
+type:String,
+},  
   vehicalSelected: {
     type: Schema.Types.ObjectId,
     ref: "Vehical",
