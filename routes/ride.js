@@ -13,5 +13,5 @@ router.post("/createride", rideController.CreateRide);
 
 //Route to delete ride
 router.post("/deleteride", rideController.DeleteRide);
-
+router.patch("/updateDriver",rideController.UpdateDriver);
 module.exports = router;

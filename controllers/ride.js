@@ -51,19 +51,45 @@ exports.GetRideList = async (req, res, next) => {
 };
 //Create Ride
 exports.CreateRide = async (req, res, next) => {
+  console.log(req.body);
   try {
     const { pickUpLocation, dropLocation, Kms } = req.body;
+
     const token = req.headers["authorization"];
+    console.log(token,"token");
     const decoded = await jwtToken
       .decryptToken(token)
       .then((result) => result.user)
       .catch((error) => error);
-    const ride = new Ride({
-      ByUserID: decoded._id,
-      pickUpLocation,
-      dropLocation,
-      Kms,
+     console.log(decoded._id);
+     console.log(req.body)
+    const ride = await new Ride({
+      ByUserID:decoded._id,
+            pickUpLocation:req.body.pickUpLocation,
+      dropLocation:req.body.dropLocation,
+      Kms:req.body.kms,
+      goodType:req.body.goodType,
+      pickupName:req.body.pickupName,
+      pickupNumber:req.body.pickupNumber,
+      receivrNumber:req.body.receivrNumber,
+      // vehicalSelected:req.body.vehicalSelected,
+      paymentType:req.body.paymentType,
+      orderStatus:req.body.orderStatus,
+      createdAt:req.body.createdAt,
+      couponApplied:req.body.couponApplied,
+      AcceptedByDriverId:req.body.AcceptedByDriverId,
+      PickedUpAt:req.body.PickedUpAt,
+      RecivedAt:req.body.RecivedAt,
+      rating:req.body.rating,
+comment:req.body.comment,
+suggestion:req.body.suggestion,
+status:req.body.status,
+StartOpt:req.body.StartOpt,
+CompleteOtp:req.body.CompleteOtp,
+message:req.body.message
+
     }).save();
+    console.log(decoded._id,"userRide");
     const saverideintouser = await User.findByIdAndUpdate(decoded._id, {
       $push: { rideHistory: ride._id },
     });
@@ -92,4 +118,14 @@ exports.DeleteRide = async (req, res) => {
   } catch (err) {
     next(err);
   }
+};
+exports.UpdateDriver=async(req,res,next)=>{
+  console.log(req.body.id,req.body);
+  try {
+    await Ride.updateOne({ _id: req.body._id }, { ...req.body });
+  responseHandler.data(res, "Driver Updated SuccessFully", 200);
+  } catch (e) {
+    next(e);
+  }
+
 };

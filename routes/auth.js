@@ -16,4 +16,13 @@ router.post("/createuser", authController.createUser);
 
 router.post("/verifyOtp", authController.loginUser);
 
+//For Driver
+router.post("/createDriver", authController.createDriver);
+
+//Send Otp To Driver
+router.post("/sendDriverOtp",authController.SendOTPToDriver);
+
+//Driver otp verification for login
+router.post("/verifydriverOtp",authController.loginDriver)
+
 module.exports = router;

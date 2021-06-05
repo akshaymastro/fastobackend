@@ -8,6 +8,7 @@ router.get("/GetAllCities", adminController.GetAllCities);
 router.post("/create", adminController.adminCreate);
 router.post("/login", adminController.adminlogin);
 router.delete("/delete/:id", adminController.adminDelete);
-// router.patch("/update", adminController.adminUpdate);
+
+ router.patch("/update", adminController.adminUpdate);
 
 module.exports = router;

@@ -5,6 +5,7 @@ const bcrypt = require("bcrypt");
 const responseHandler = require("../helpers/responseHandler");
 const jwtToken = require("../helpers/jwt");
 const adminValidator = require("../validators/adminValidator");
+const responseHelper = require("../helpers/response");
 
 exports.GetAllUsers = async (req, res) => {
   try {
@@ -55,6 +56,7 @@ exports.adminCreate = async (req, res, next) => {
 
     if (admin) {
       return responseHandler.failure(res, "user is already register.", 400);
+      console.log(res);
     }
 
     await new Admin(userForm).save();
@@ -81,6 +83,19 @@ exports.adminList = async (req, res, next) => {
     }
     responseHandler.data(res, admin, 200);
   } catch (err) {
+    next(err);
+  }
+};
+exports.adminUpdate=async(req,res,next)=>{
+  try{
+    console.log(req.body._id);
+    await Admin.updateOne({ _id:req.body._id }, { ...req.body });
+  
+    responseHelper.success(res, "Admin Updated SuccessFully", 200);
+
+
+  }
+  catch(err){
     next(err);
   }
 };

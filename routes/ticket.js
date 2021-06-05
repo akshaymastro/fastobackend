@@ -9,7 +9,7 @@ router.post("/replyticket", ticketController.ReplyTicket);
 router.get("/getticket", ticketController.GetTicket);
 router.get("/getticketreplies", ticketController.GetTicketReplies);
 router.post("/closeticket", ticketController.CloseTicket);
-
+router.get("/getAllTicket",ticketController.getAllTicket);
 
 
 

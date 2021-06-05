@@ -11,6 +11,7 @@ exports.createCity = async (req, res, next) => {
 };
 
 exports.updateCity = async (req, res, next) => {
+  console.log(req.body.id,req.body);
   try {
     await City.updateOne({ _id: req.body._id }, { ...req.body });
     responseHelper.success(res, "City Updated SuccessFully", 200);
@@ -20,8 +21,10 @@ exports.updateCity = async (req, res, next) => {
 };
 
 exports.deleteCity = async (req, res, next) => {
+  console.log(req.params._id);
   try {
-    await City.deleteOne({ _id: req.body._id });
+    console.log("delete");
+    await City.deleteOne({ _id: req.params._id });
     responseHelper.success(res, "City Deleted SuccessFully", 200);
   } catch (e) {
     next(e);

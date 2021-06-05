@@ -4,12 +4,14 @@ const Ticket = require("../model/Ticket.model");
 const moment = require("moment");
 const jwtToken = require("../helpers/jwt");
 const responseHandler = require("../helpers/responseHandler");
+const responseHelper = require("../helpers/response");
 //Create Ticket
 exports.CreateTicket = async (req, res, next) => {
   try {
-    // const authheader = req.get("Authorization");
-    // const decoded = await jwtToken.decryptToken(authheader);
+   // const authheader = req.get("Authorization");
+     //const decoded = await jwtToken.decryptToken(authheader);
     const token = req.headers["authorization"];
+    console.log(token,"token");
     const decoded = await jwtToken
       .decryptToken(token)
       .then((result) => result.user)
@@ -72,20 +74,22 @@ exports.ReplyTicket = async (req, res) => {
   try {
     // const authheader = req.get("Authorization");
     // const decoded = await jwtToken.decryptToken(authheader);
-    const token = req.headers["authorization"];
-    const decoded = await jwtToken
-      .decryptToken(token)
-      .then((result) => result.user)
-      .catch((error) => error);
+    // const token = req.headers["authorization"];
+    // const decoded = await jwtToken
+    //   .decryptToken(token)
+    //   .then((result) => result.user)
+    //   .catch((error) => error);
     const { ReplyMsg } = req.body;
+    console.log(req.body);
     var ReplyToTicket = {
-      ByUser: decoded._id,
+      ByUser: "5f1c574fe1fc1f3510683264",
       ByUserAvatar:
         "https://images.unsplash.com/photo-1494548162494-384bba4ab999?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&w=1000&q=80",
       ReplyMsg: ReplyMsg,
       ReplyTime: moment().format("h:mm:ss a"),
       RelpyDate: moment().format("MMM Do YY"),
     };
+    console.log(ReplyToTicket);
     const replyticket = await Ticket.findByIdAndUpdate(
       { _id: req.body.ticketid },
       {
@@ -94,6 +98,7 @@ exports.ReplyTicket = async (req, res) => {
         },
       }
     );
+    
     responseHandler.data(res, replyticket, 200);
   } catch (error) {
     next(error);
@@ -160,3 +165,14 @@ exports.CloseTicket = async (req, res) => {
     next(error);
   }
 };
+exports.getAllTicket=async(req,res,next)=>{
+  try{
+    console.log("Rohit");
+    let Allticket=await Ticket.find({});
+    console.log(Allticket);
+    responseHandler.success(res, Allticket, 200);
+  }
+  catch (e) {
+    next(e);
+  }
+}

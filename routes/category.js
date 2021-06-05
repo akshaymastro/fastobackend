@@ -5,7 +5,7 @@ const { upload } = require("../helpers/uploadImage");
 const router = express.Router();
 
 router.get("/", CategoryController.get);
-router.get("/:id", CategoryController.getById);
+router.post("/byid", CategoryController.getById);
 router.post(
   "/newgoodtype",
   upload.single("category_image"),
