@@ -1,33 +1,48 @@
-const multer = require("multer");
+const AWS = require("aws-sdk");
+const randomstring = require("randomstring");
+const { S3_BUCKET_NAME, AWS_REGION, S3_BUCKET_URL, ACCESS_KEY, SECRET_KEY } =
+  process.env;
 
-// const storage = multer.diskStorage({
-//   destination: (req, file, cb) => {
-//     cb(null, "uploads/");
-//   },
-//   filename: (req, file, cb) => {
-//     cb(null, `${Date.now()}_${file.originalname}`);
-//   },
-//   fileFilter: (req, file, cb) => {
-//     const ext = path.extname(file.originalname);
-//     if (ext !== ".jpg" || ext !== ".png") {
-//       return cb(res.status(400).end("only jpg, png are allowed"), false);
-//     }
-//     cb(null, true);
-//   },
-// });
+AWS.config.region = AWS_REGION;
 
-// const upload = multer({ storage: storage }).single("image");
-const upload = multer({
-  limits: {
-    fileSize: 1000000,
-  },
-  fileFilter(req, file, cb) {
-    if (!file.originalname.match(/\.(jpg|jpeg|png)$/)) {
-      return cb(new Error("Please upload an image"));
-    }
-
-    cb(undefined, true);
-  },
+const s3 = new AWS.S3({
+  accessKeyId: ACCESS_KEY,
+  secretAccessKey: SECRET_KEY,
 });
 
-module.exports = { upload };
+const s3Upload = async (file, name, fileName) => {
+  try {
+    const { buffer, originalname, mimetype } = file;
+    let name = randomstring.generate({
+      length: 12,
+      charset: "alphabetic",
+    });
+
+    const Key = originalname.replace(" ", "+");
+
+    const s3Options = {
+      Body: buffer,
+      Key,
+      Bucket: S3_BUCKET_NAME,
+      ACL: "public-read",
+      ContentType: mimetype,
+      Metadata: {
+        name,
+      },
+    };
+
+    await s3.putObject(s3Options).promise();
+
+    return {
+      link: `${S3_BUCKET_URL}/${s3Options.Key}`,
+      mediaName: name,
+      mediaType: mimetype,
+    };
+  } catch (err) {
+    return err;
+  }
+};
+
+module.exports = {
+  s3Upload,
+};
