@@ -63,8 +63,8 @@ exports.CreateRide = async (req, res, next) => {
       .catch((error) => error);
      console.log(decoded._id);
      console.log(req.body)
-    const ride = new Ride({
-      ByUserID:req.body.ByUserID,
+    const ride = await new Ride({
+      ByUserID:decoded._id,
             pickUpLocation:req.body.pickUpLocation,
       dropLocation:req.body.dropLocation,
       Kms:req.body.kms,
@@ -84,11 +84,12 @@ exports.CreateRide = async (req, res, next) => {
 comment:req.body.comment,
 suggestion:req.body.suggestion,
 status:req.body.status,
-otp:req.body.otp,
+StartOpt:req.body.StartOpt,
+CompleteOtp:req.body.CompleteOtp,
 message:req.body.message
 
     }).save();
-    console.log("userRide");
+    console.log(decoded._id,"userRide");
     const saverideintouser = await User.findByIdAndUpdate(decoded._id, {
       $push: { rideHistory: ride._id },
     });

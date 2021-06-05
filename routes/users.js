@@ -3,7 +3,7 @@ const userController = require("../controllers/users");
 const router = express.Router();
 
 //Route to update fields of logged in user
-router.post("/updatefields", userController.UpdateFields);
+router.patch("/updatefields", userController.UpdateFields);
 
 //Route to update fields of logged in user
 router.post("/getuser", userController.GetUser);
@@ -22,5 +22,7 @@ router.patch("/updateUser", userController.UpdateUser);
 router.patch("/emailVerification", userController.EmailVerification);
 
 router.patch("/verify", userController.Verification);
+
+router.post("/createUser",userController.createUser);
 
 module.exports = router;

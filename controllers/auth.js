@@ -19,11 +19,14 @@ exports.GetUser = async (req, res, next) => {
 //Login Passenger
 exports.loginUser = async (req, res, next) => {
   const { Mobile, Otp } = req.body;
+  
   try {
+    
     const user = await User.findOne({ Mobile });
-    console.log(otp, "otppspspsp");
-    console.log(user.otp === Otp, "otp check");
-    if (user.otp === Otp) {
+    console.log(user.otp,"My Otp");
+    console.log(Otp, "otppspspsp");
+    console.log(user.otp==Otp, "otp check");
+    if (user.otp == Otp) {
       const token = await jwtToken.createNewToken(user);
       responseHandler.data(
         res,
@@ -44,16 +47,26 @@ exports.loginUser = async (req, res, next) => {
 
 //Login Driver
 exports.loginDriver = async (req, res, next) => {
-  const { Mobile } = req.body;
+  const { Mobile,OTP } = req.body;
   try {
     const driver = await Driver.findOne({ Mobile });
 
-    if (!driver) {
-      responseHandler.failure(res, "you are not register as driver.", 400);
+    if (driver.otp == OTP) {
+      const token = await jwtToken.createNewToken(driver);
+      responseHandler.data(
+        res,
+        {
+          token
+          
+        },
+        200
+      );
+    } else {
+      throw Error("Otp is Incorrect");
     }
 
-    const token = await jwtToken.createNewToken(driver);
-    responseHandler.token(res, token, 200);
+    //const token = await jwtToken.createNewToken(driver);
+    //responseHandler.token(res, token, 200);
   } catch (e) {
     next(e);
   }
@@ -73,6 +86,7 @@ exports.SendOTP = async (req, res, next) => {
       upperCase: false,
       specialChars: false,
     });
+    console.log(req.body.Mobile);
     await sendSMS(Mobile, GeneratedOtp);
 
     sentotp = Object.assign({
@@ -89,6 +103,7 @@ exports.SendOTP = async (req, res, next) => {
         { otp: GeneratedOtp }
       );
     }
+    console.log(GeneratedOtp);
     responseHandler.data(res, { otp: GeneratedOtp }, 200);
   } catch (err) {
     next(err);
@@ -130,3 +145,38 @@ exports.createDriver = async (req, res, next) => {
     next(err);
   }
 };
+
+//Send Otp To Driver
+exports.SendOTPToDriver = async (req, res, next) => {
+  const { Mobile } = req.body;
+  try {
+    const GeneratedOtp = otp.generate(5, {
+      digits: true,
+      alphabets: false,
+      upperCase: false,
+      specialChars: false,
+    });
+    console.log(req.body.Mobile);
+    await sendSMS(Mobile, GeneratedOtp);
+
+    sentotp = Object.assign({
+      otp: GeneratedOtp,
+    });
+    console.log(Mobile, "Mobileee");
+    const driver = await Driver.findOne({ Mobile });
+    console.log(driver);
+    if (!driver) {
+      new Driver({ Mobile, otp: GeneratedOtp }).save();
+    } else {
+      const updateDriver = await Driver.updateOne(
+        { Mobile },
+        { otp: GeneratedOtp }
+      );
+    }
+    console.log(GeneratedOtp);
+    responseHandler.data(res, { otp: GeneratedOtp }, 200);
+  } catch (err) {
+    next(err);
+  }
+};
+

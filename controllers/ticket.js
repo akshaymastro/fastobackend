@@ -4,6 +4,7 @@ const Ticket = require("../model/Ticket.model");
 const moment = require("moment");
 const jwtToken = require("../helpers/jwt");
 const responseHandler = require("../helpers/responseHandler");
+const responseHelper = require("../helpers/response");
 //Create Ticket
 exports.CreateTicket = async (req, res, next) => {
   try {
@@ -164,3 +165,14 @@ exports.CloseTicket = async (req, res) => {
     next(error);
   }
 };
+exports.getAllTicket=async(req,res,next)=>{
+  try{
+    console.log("Rohit");
+    let Allticket=await Ticket.find({});
+    console.log(Allticket);
+    responseHandler.success(res, Allticket, 200);
+  }
+  catch (e) {
+    next(e);
+  }
+}

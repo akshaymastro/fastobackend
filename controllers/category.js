@@ -46,7 +46,7 @@ exports.get = async (req, res, next) => {
 
 exports.getById = async (req, res, next) => {
   try {
-    const categories = await CategoryModel.findOne({ _id: req.body.id });
+    const categories = await CategoryModel.findOne({ _id: req.body._id });
     responseHandler.data(res, categories, 200);
   } catch (e) {
     next(e);

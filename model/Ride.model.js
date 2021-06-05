@@ -94,9 +94,13 @@ type:String,
   status: {
     type: String,
   },
-  otp: {
+  StartOpt: {
     type: String,
   },
+  CompleteOtp:{
+    type:String,
+  }
+
 });
 
 const Ride = mongoose.model("Ride", rideSchema);

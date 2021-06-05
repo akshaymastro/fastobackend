@@ -39,7 +39,9 @@ exports.deleteVehical = async (req, res, next) => {
 
 exports.getVehicals = async (req, res, next) => {
   try {
+    console.log("rohit");
     const vehical = await VehicalModel.find()
+    
     responseHandler.data(res, vehical, 200)
   } catch (e) {
     next(e)

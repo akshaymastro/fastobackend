@@ -8,9 +8,10 @@ const { transporter, mailOptions } = require("../helpers/mailVerification");
 
 exports.GetUser = async (req, res) => {
   try {
-    console.log(req.user, "userr");
+    console.log(req.body, "userr");
     const { Mobile } = req.body;
-    const user1 = await User.findOne({ Mobile: req.user.user.Mobile });
+    console.log(req.body.Mobile);
+    const user1 = await User.findOne({ Mobile: req.body.Mobile });
     if (!user1) {
       responseHandler.failure(res, "user not avalable.", 400);
     }
@@ -19,6 +20,18 @@ exports.GetUser = async (req, res) => {
     next(err);
   }
 };
+
+exports.createUser = async (req, res, next) => {
+  try {
+    console.log("user createad");
+    const user = await new User(req.body).save();
+    responseHandler.success(res, "User created SuccessFully", 200);
+  } catch (e) {
+    next(e);
+  }
+};
+
+
 
 exports.GetUsers = async (req, res, next) => {
   try {

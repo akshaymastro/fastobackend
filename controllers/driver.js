@@ -7,6 +7,7 @@ const responseHandler = require('../helpers/responseHandler')
 
 exports.getDriver = async (req, res, next) => {
   const { Mobile } = req.body
+  console.log(req.body);
   try {
     const drivers = await Driver.findOne({ Mobile })
     if (!drivers) {
