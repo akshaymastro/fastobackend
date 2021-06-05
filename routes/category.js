@@ -1,19 +1,18 @@
 const express = require("express");
-const multer = require("multer");
 const CategoryController = require("../controllers/category");
-const { upload } = require("../helpers/uploadImage");
+const multer = require("multer");
 const router = express.Router();
 
 router.get("/", CategoryController.get);
 router.post("/byid", CategoryController.getById);
 router.post(
   "/newgoodtype",
-  upload.single("category_image"),
+  multer().any("category_image"),
   CategoryController.create
 );
 router.patch(
   "/updategoodtype/:id",
-  upload.single("category_image"),
+  multer().any("category_image"),
   CategoryController.update
 );
 
