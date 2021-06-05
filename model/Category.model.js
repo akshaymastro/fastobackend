@@ -5,7 +5,7 @@ const goodCategorySchema = new mongoose.Schema({
     type: String,
   },
   category_image: {
-    type: Array,
+    type: String,
   },
 });
 

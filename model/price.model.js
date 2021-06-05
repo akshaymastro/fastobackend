@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
-const CitySchema = new mongoose.Schema({
+const PriceSchema = new mongoose.Schema({
   city_class: {
     type: String,
   },
@@ -14,6 +14,6 @@ const CitySchema = new mongoose.Schema({
   
 });
 
-const City = mongoose.model("Price", PriceSchema);
+const Price = mongoose.model("Price", PriceSchema);
 
 module.exports = Price;
