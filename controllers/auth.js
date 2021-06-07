@@ -79,6 +79,7 @@ exports.loginDriver = async (req, res, next) => {
 //then enter the app
 exports.SendOTP = async (req, res, next) => {
   const { Mobile } = req.body;
+  const {userType}=req.body;
   try {
     const GeneratedOtp = otp.generate(5, {
       digits: true,
@@ -88,7 +89,7 @@ exports.SendOTP = async (req, res, next) => {
     });
     console.log(req.body.Mobile);
     await sendSMS(Mobile, GeneratedOtp);
-
+console.log(userType);
     sentotp = Object.assign({
       otp: GeneratedOtp,
     });
@@ -100,7 +101,8 @@ exports.SendOTP = async (req, res, next) => {
     } else {
       const updateUser = await User.updateOne(
         { Mobile },
-         { otp: GeneratedOtp }
+         { otp: GeneratedOtp },
+         {userType}
       );
     }
     console.log(GeneratedOtp,"new otp");
@@ -149,6 +151,7 @@ exports.createDriver = async (req, res, next) => {
 //Send Otp To Driver
 exports.SendOTPToDriver = async (req, res, next) => {
   const { Mobile } = req.body;
+  const {userType}=req.body;
   try {
     const GeneratedOtp = otp.generate(5, {
       digits: true,
@@ -169,7 +172,7 @@ exports.SendOTPToDriver = async (req, res, next) => {
       new Driver({ Mobile, otp: GeneratedOtp }).save();
     } else {
       const updateDriver = await Driver.updateOne(
-        { Mobile },
+        { Mobile },{userType},
         { otp: GeneratedOtp }
       );
     }
