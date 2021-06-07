@@ -10,6 +10,7 @@ exports.createVehical = async (req, res, next) => {
     } else {
       console.log("else");
     }
+    console.log(req.body);
     const newVehical = await VehicalModel(req.body).save();
     console.log(newVehical);
     responseHandler.success(res, "Vehical Created SuccesFully", 200);
@@ -32,7 +33,7 @@ exports.updateVehical = async (req, res, next) => {
     const updateVehical = await VehicalModel.updateOne(
       { _id: req.params.id },
       { ...req.body
-        
+
        }
     );
     console.log(updateVehical, "vehicall");

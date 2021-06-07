@@ -100,10 +100,10 @@ exports.SendOTP = async (req, res, next) => {
     } else {
       const updateUser = await User.updateOne(
         { Mobile },
-        { otp: GeneratedOtp }
+         { otp: GeneratedOtp }
       );
     }
-    console.log(GeneratedOtp);
+    console.log(GeneratedOtp,"new otp");
     responseHandler.data(res, { otp: GeneratedOtp }, 200);
   } catch (err) {
     next(err);
@@ -121,7 +121,7 @@ exports.createUser = async (req, res, next) => {
       return responseHandler.failure(res, "user is already register.", 400);
     }
 
-    const response = await new User({ Mobile }).save();
+    const response = await new User({ Mobile}).save();
     responseHandler.data(res, response, 200);
   } catch (err) {
     next(err);

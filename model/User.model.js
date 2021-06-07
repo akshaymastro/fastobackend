@@ -3,6 +3,10 @@ const Schema = mongoose.Schema;
 const geocoder = require("../utils/geocoder");
 
 const userSchema = new mongoose.Schema({
+  userType:{
+    type:String,
+    enum:['user','driver']
+  },
   firstName: {
     type: String,
   },

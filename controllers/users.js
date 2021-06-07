@@ -6,12 +6,20 @@ const jwtToken = require("../helpers/jwt");
 const responseHandler = require("../helpers/responseHandler");
 const { transporter, mailOptions } = require("../helpers/mailVerification");
 
-exports.GetUser = async (req, res) => {
+exports.GetUser = async (req, res,next) => {
+
+  const token = req.headers["authorization"];
   try {
-    console.log(req.body, "userr");
-    const { Mobile } = req.body;
-    console.log(req.body.Mobile);
-    const user1 = await User.findOne({ Mobile: req.body.Mobile });
+
+    const decoded = await jwtToken
+    .decryptToken(token)
+    .then((result) => result.user)
+    .catch((error) => error);
+
+   
+    //const { Mobile } = req.body;
+    //console.log(req.body.Mobile);
+    const user1 = await User.findOne({ Mobile: decoded.Mobile });
     if (!user1) {
       responseHandler.failure(res, "user not avalable.", 400);
     }
