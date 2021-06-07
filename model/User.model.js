@@ -87,6 +87,33 @@ const userSchema = new mongoose.Schema({
   city: {
     type: String,
   },
+  driverAadhaar: {
+    type: String,
+   
+  },
+  driverPan: {
+    type: String,
+     },
+  driverLic: {
+    type: String,
+    
+  },
+  driverRc: {
+    type: String,
+    
+  },
+  driverCategory: {
+    type: String,
+    
+  },
+  driverInsurance: {
+    type: String,
+    
+  },
+  driverNCR: {
+    type: String,
+    
+  },
   pincode: {
     type: Number,
   },
