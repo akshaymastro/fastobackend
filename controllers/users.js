@@ -19,7 +19,7 @@ exports.GetUser = async (req, res,next) => {
    
     //const { Mobile } = req.body;
     //console.log(req.body.Mobile);
-    const user1 = await User.findOne({ Mobile: decoded.Mobile });
+    const user1 = await User.findOne({ Mobile: decoded.Mobile ,userType:decoded.userType});
     if (!user1) {
       responseHandler.failure(res, "user not avalable.", 400);
     }
@@ -137,11 +137,13 @@ exports.UpdateUser = async (req, res, next) => {
       .decryptToken(token)
       .then((result) => result.user)
       .catch((error) => error);
+      console.log(decoded._id);
     await User.findOneAndUpdate(
       { _id: decoded._id },
       {
         ...req.body,
       }
+      
     );
     responseHandler.data(res, "user update successfully.", 200);
   } catch (error) {

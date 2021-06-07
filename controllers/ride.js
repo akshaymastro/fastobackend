@@ -5,13 +5,14 @@ const responseHandler = require("../helpers/responseHandler");
 
 exports.GetUserRide = async (req, res, next) => {
   try {
-    const { rideId } = req.query;
+    const { rideId } = req.body.query;
+    console.log(req.body.query,"myid");
     const token = req.headers["authorization"];
     const decoded = await jwtToken
       .decryptToken(token)
       .then((result) => result.user)
       .catch((error) => error);
-    const rides = await Ride.findOne({ ByUserID: decoded._id, _id: rideId });
+    const rides = await Ride.findOne({ ByUserID: decoded._id, _id: req.body.query });
     if (!rides) {
       responseHandler.failure(res, "no ride is avalable.", 400);
     }
@@ -28,7 +29,10 @@ exports.GetUserRideList = async (req, res, next) => {
       .decryptToken(token)
       .then((result) => result.user)
       .catch((error) => error);
-    const rides = await Ride.find({ ByUserID: decoded._id });
+
+      console.log(decoded._id);
+    const rides = await Ride.find({ByUserID: decoded._id });
+    console.log(rides);
     if (!rides) {
       responseHandler.failure(res, "no ride is avalable.", 400);
     }

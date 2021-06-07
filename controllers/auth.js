@@ -18,12 +18,13 @@ exports.GetUser = async (req, res, next) => {
 
 //Login Passenger
 exports.loginUser = async (req, res, next) => {
-  const { Mobile, Otp } = req.body;
+  const { Mobile, Otp,userType } = req.body;
   
   try {
     
-    const user = await User.findOne({ Mobile });
+    const user = await User.findOne({ Mobile,userType });
     console.log(user.otp,"My Otp");
+    console.log(user.userType,"userType");
     console.log(Otp, "otppspspsp");
     console.log(user.otp==Otp, "otp check");
     if (user.otp == Otp) {
@@ -80,6 +81,8 @@ exports.loginDriver = async (req, res, next) => {
 exports.SendOTP = async (req, res, next) => {
   const { Mobile } = req.body;
   const {userType}=req.body;
+  console.log(Mobile);
+  console.log(userType,"userType");
   try {
     const GeneratedOtp = otp.generate(5, {
       digits: true,
@@ -94,15 +97,17 @@ console.log(userType);
       otp: GeneratedOtp,
     });
     console.log(Mobile, "Mobileee");
-    const user = await User.findOne({ Mobile });
+    console.log(userType,"dfufh");
+    const user = await User.findOne({ Mobile ,userType});
+    
     console.log(user);
     if (!user) {
-      new User({ Mobile, otp: GeneratedOtp }).save();
+      new User({ Mobile, otp: GeneratedOtp,userType }).save();
     } else {
       const updateUser = await User.updateOne(
-        { Mobile },
+        { Mobile,userType },
          { otp: GeneratedOtp },
-         {userType}
+         
       );
     }
     console.log(GeneratedOtp,"new otp");
