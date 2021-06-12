@@ -2,6 +2,9 @@ require("dotenv").config();
 const express = require("express");
 const mongoose = require("mongoose");
 const app = express();
+const DriverModel = require("./model/Driver.model");
+var server = require("http").createServer(app);
+var io = require("socket.io")(server);
 const helmet = require("helmet");
 const cors = require("cors");
 const connectDB = require("./settings/connectDB");
@@ -23,7 +26,7 @@ const imageRouter = require("./routes/image");
 const cityRouter = require("./routes/city");
 const errorHandler = require("./utils/globalErrorHandler");
 const userController = require("./controllers/users");
-const { PORT } = process.env ;
+const { PORT } = process.env;
 
 connectDB()
   .then(() => console.log("Connected to Mongodb..."))
@@ -34,7 +37,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json({ limit: "20mb" }));
 app.use(cors());
 //app.listen(5681);
-
+app.set("socketio", io);
 app.use("/auth", authRouter);
 app.use("/users", userRouter);
 app.use("/drivers", driverRouter);
@@ -48,10 +51,37 @@ app.use("/admin", adminRouter);
 app.use("/image", imageRouter);
 app.use("/city", cityRouter);
 app.use("/category", categoryRouter);
-app.use("/vehical",  vehicalRouter);
+app.use("/vehical", vehicalRouter);
 app.use("/offer", offerRouter);
 
 app.use("/goodsType", goodsRouter);
 app.use("/payment", authMiddleware, paymentRoute);
 app.use(errorHandler);
-app.listen(PORT, () => console.log(`Server is running on ${PORT}`));
+io.on("connection", (socket) => {
+  console.log(socket.id);
+});
+
+io.on("updateRiderLocation", async (id, body) => {
+  const res = await DriverModel.updateOne(
+    { _id: id },
+    { "currentLocation.type": body.type },
+    { $set: { "currentLocation.coordinates": body.coordinates } }
+  );
+  io.emit("driverupdated", "Driver Location Updated");
+});
+
+io.on("getNearDrivers", async (body) => {
+  const res = await DriverModel.find({
+    currentLocation: {
+      $near: {
+        $geometry: { type: "Point", coordinates: body.coordinates },
+        $minDistance: 1000,
+        $maxDistance: 5000,
+      },
+    },
+  });
+  io.emit("NearByDriversList", res);
+});
+server.listen(PORT || 3000, () =>
+  console.log("Server running on ..." + process.env.PORT || 3000)
+);
