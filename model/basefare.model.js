@@ -2,15 +2,16 @@ const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
 const PriceSchema = new mongoose.Schema({
-  city_class: {
+  class_name: {
     type: String,
   },
-  base_rate: {
-    type: String,
+  fuelcharge:{
+
+    type:String,
   },
-  fulecharge: {
-    type: String,
-  },
+  basefare:{
+    type: Array
+  }
   
 });
 

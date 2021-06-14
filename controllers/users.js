@@ -64,7 +64,7 @@ exports.UpdateFields = async (req, res, next) => {
     const { firstName, lastName, email, address, state, city, pincode } =
       req.body;
     const user = await User.findOneAndUpdate(
-      { Mobile: decoded.Mobile },
+      { _id: decoded._id },
       {
         firstName: firstName,
         lastName: lastName,

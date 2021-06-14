@@ -11,11 +11,12 @@ const CitySchema = new mongoose.Schema({
   country: {
     type: String,
   },
-  city_charges: {
+  city_class: {
     type: String,
   },
+  
 });
 
-const City = mongoose.model("Chat", CitySchema);
+const City = mongoose.model("City", CitySchema);
 
 module.exports = City;

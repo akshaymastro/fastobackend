@@ -17,7 +17,7 @@ router.post("/deleteuser", userController.DeleteUser);
 router.post("/updatecurrentlocation", userController.UpdateCurrentLocation);
 
 //Route to update profile picture url of uploaded image
-router.patch("/updateUser", userController.UpdateUser);
+router.patch("/updateuser", userController.UpdateUser);
 
 router.patch("/emailVerification", userController.EmailVerification);
 

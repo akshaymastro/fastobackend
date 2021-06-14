@@ -67,7 +67,7 @@ const userSchema = new mongoose.Schema({
   walletMoney: {
     type: String,
   },
-  otp: {
+  Otp: {
     type: Number,
   },
   offerGiven: [{}],

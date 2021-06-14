@@ -23,6 +23,7 @@ const imageRouter = require("./routes/image");
 const cityRouter = require("./routes/city");
 const errorHandler = require("./utils/globalErrorHandler");
 const userController = require("./controllers/users");
+const baseRouter=require("./routes/base");
 const { PORT } = process.env ;
 
 connectDB()
@@ -42,6 +43,8 @@ app.use("/verify", userController.Verification);
 app.use("/rides", rideRouter);
 //app.use("/ticket", authMiddleware, ticketRouter);
 app.use("/ticket", ticketRouter);
+
+app.use("/basefare",baseRouter);
 
 app.use("/ticketReply", authMiddleware, ticketReplyRouter);
 app.use("/admin", adminRouter);
