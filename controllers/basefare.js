@@ -1,6 +1,6 @@
 const base=require('../model/basefare.model');
 const responseHelper = require("../helpers/response");
-
+const City = require("../model/city.model");
 
 
   exports.createFuel = async (req, res, next) => {
@@ -50,10 +50,19 @@ exports.deleteFare = async (req, res, next) => {
 };
 
 exports.getfare = async (req, res, next) => {
+  let allcities = await City.find({city_name:req.body.city_name});
+  let class_name=allcities.map((item)=>{
+    return(item.city_class);
+  })
+  
+console.log(class_name[0]);
   try {
+
+
+
 if(req.body.km<=40){
     let farelist = await base.aggregate([
-      {$match: {"class_name": req.body.class_name}}, // <-- match only the document which have a matching element
+      {$match: {"class_name": class_name[0]}}, // <-- match only the document which have a matching element
       {$project: {
       fuelcharge:{fuelcharge:"$fuelcharge"},
           basefare: {$filter: {
