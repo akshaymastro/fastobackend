@@ -3,6 +3,7 @@ const express = require("express");
 const mongoose = require("mongoose");
 const app = express();
 const DriverModel = require("./model/Driver.model");
+const UserModel = require("./model/User.model");
 var server = require("http").createServer(app);
 var io = require("socket.io")(server);
 const helmet = require("helmet");
@@ -66,7 +67,7 @@ io.on("connection", (socket) => {
 
   socket.on("updateRiderLocation", async (body) => {
     const decodedtoken = await JWT.decryptToken(body.token);
-    const res = await DriverModel.updateOne(
+    const res = await UserModel.updateOne(
       { _id: decodedtoken._id },
       { "currentLocation.type": body.type },
       { $set: { "currentLocation.coordinates": body.coordinates } }
