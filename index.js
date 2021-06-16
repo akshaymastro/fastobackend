@@ -65,6 +65,7 @@ io.on("connection", (socket) => {
 });
 
 io.on("updateRiderLocation", async (id, body) => {
+  console.log(id, body, "socket bodydydydy");
   const res = await DriverModel.updateOne(
     { _id: id },
     { "currentLocation.type": body.type },
