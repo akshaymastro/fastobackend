@@ -62,10 +62,11 @@ app.use("/payment", authMiddleware, paymentRoute);
 app.use(errorHandler);
 io.on("connection", (socket) => {
   console.log(socket.id);
-  socket.on("updateRiderLocation", async (id, body) => {
-    console.log(id, body, "socket bodydydydy");
+
+  socket.on("updateRiderLocation", async (body) => {
+    console.log(body, "socket bodydydydy");
     const res = await DriverModel.updateOne(
-      { _id: id },
+      { _id: body.id },
       { "currentLocation.type": body.type },
       { $set: { "currentLocation.coordinates": body.coordinates } }
     );
