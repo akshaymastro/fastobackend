@@ -62,30 +62,30 @@ app.use("/payment", authMiddleware, paymentRoute);
 app.use(errorHandler);
 io.on("connection", (socket) => {
   console.log(socket.id);
-});
-
-io.on("updateRiderLocation", async (id, body) => {
-  console.log(id, body, "socket bodydydydy");
-  const res = await DriverModel.updateOne(
-    { _id: id },
-    { "currentLocation.type": body.type },
-    { $set: { "currentLocation.coordinates": body.coordinates } }
-  );
-  io.emit("driverupdated", "Driver Location Updated");
-});
-
-io.on("getNearDrivers", async (body) => {
-  const res = await DriverModel.find({
-    currentLocation: {
-      $near: {
-        $geometry: { type: "Point", coordinates: body.coordinates },
-        $minDistance: 1000,
-        $maxDistance: 5000,
-      },
-    },
+  io.on("updateRiderLocation", async (id, body) => {
+    console.log(id, body, "socket bodydydydy");
+    const res = await DriverModel.updateOne(
+      { _id: id },
+      { "currentLocation.type": body.type },
+      { $set: { "currentLocation.coordinates": body.coordinates } }
+    );
+    io.emit("driverupdated", "Driver Location Updated");
   });
-  io.emit("NearByDriversList", res);
+
+  io.on("getNearDrivers", async (body) => {
+    const res = await DriverModel.find({
+      currentLocation: {
+        $near: {
+          $geometry: { type: "Point", coordinates: body.coordinates },
+          $minDistance: 1000,
+          $maxDistance: 5000,
+        },
+      },
+    });
+    io.emit("NearByDriversList", res);
+  });
 });
+
 server.listen(PORT || 3000, () =>
   console.log("Server running on ..." + process.env.PORT || 3000)
 );
