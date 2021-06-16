@@ -62,7 +62,7 @@ app.use("/payment", authMiddleware, paymentRoute);
 app.use(errorHandler);
 io.on("connection", (socket) => {
   console.log(socket.id);
-  io.on("updateRiderLocation", async (id, body) => {
+  socket.on("updateRiderLocation", async (id, body) => {
     console.log(id, body, "socket bodydydydy");
     const res = await DriverModel.updateOne(
       { _id: id },
@@ -72,7 +72,7 @@ io.on("connection", (socket) => {
     io.emit("driverupdated", "Driver Location Updated");
   });
 
-  io.on("getNearDrivers", async (body) => {
+  socket.on("getNearDrivers", async (body) => {
     const res = await DriverModel.find({
       currentLocation: {
         $near: {
