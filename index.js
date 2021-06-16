@@ -8,6 +8,7 @@ var io = require("socket.io")(server);
 const helmet = require("helmet");
 const cors = require("cors");
 const connectDB = require("./settings/connectDB");
+const JWT = require("./helpers/jwt");
 const bodyParser = require("body-parser");
 const userRouter = require("./routes/users");
 const driverRouter = require("./routes/driver");
@@ -64,6 +65,8 @@ io.on("connection", (socket) => {
   console.log(socket.id);
 
   socket.on("updateRiderLocation", async (body) => {
+    const decodedtoken = await JWT.decryptToken(body.token);
+    console.log(decodedtoken, "tokenenen decoed");
     console.log(body, "socket bodydydydy");
     const res = await DriverModel.updateOne(
       { _id: body.id },
