@@ -69,7 +69,7 @@ io.on("connection", (socket) => {
     const decodedtoken = await JWT.decryptToken(body.token);
     console.log(decodedtoken);
     const res = await DriverModel.updateOne(
-      { _id: decodedtoken.user._id },
+      { _id: body.id },
       {
         $set: {
           "currentLocation.coordinates": [
