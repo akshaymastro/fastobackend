@@ -66,16 +66,13 @@ io.on("connection", (socket) => {
   console.log(socket.id);
 
   socket.on("updateRiderLocation", async (body) => {
-    const decodedtoken = await JWT.decryptToken(body.token);
-    console.log(decodedtoken);
+    console.log(body, "bodydyd");
     const res = await DriverModel.updateOne(
       { _id: body.id },
       {
-        $set: {
-          "currentLocation.coordinates": [
-            body.coordinates.lat,
-            body.coordinates.long,
-          ],
+        currentLocation: {
+          type: "Point",
+          coordinates: [body.coordinates.lat, body.coordinates.long],
         },
       }
       // { "currentLocation.type": body.type }
