@@ -18,28 +18,49 @@ exports.GetUser = async (req, res, next) => {
 
 //Login Passenger
 exports.loginUser = async (req, res, next) => {
-  const { Mobile, Otp,userType } = req.body;
-  
+  const { Mobile, Otp, userType } = req.body;
+
   try {
-    
-    const user = await User.findOne({ Mobile,userType });
-    console.log(user.otp,"My Otp");
-    console.log(user.userType,"userType");
-    console.log(Otp, "otppspspsp");
-    console.log(user.otp==Otp, "otp check");
-    if (user.otp == Otp) {
-      const token = await jwtToken.createNewToken(user);
-      responseHandler.data(
-        res,
-        {
-          token,
-          is_profileUpdated: user.is_profileUpdated,
-          new_user: user.is_profileUpdated == true ? false : true,
-        },
-        200
-      );
+    if (userType === "user") {
+      const user = await User.findOne({ Mobile, userType });
+      console.log(user.otp, "My Otp");
+      console.log(user.userType, "userType");
+      console.log(Otp, "otppspspsp");
+      console.log(user.otp == Otp, "otp check");
+      if (user.otp == Otp) {
+        const token = await jwtToken.createNewToken(user);
+        responseHandler.data(
+          res,
+          {
+            token,
+            is_profileUpdated: user.is_profileUpdated,
+            new_user: user.is_profileUpdated == true ? false : true,
+          },
+          200
+        );
+      } else {
+        throw Error("Otp is Incorrect");
+      }
     } else {
-      throw Error("Otp is Incorrect");
+      const driver = await Driver.findOne({ Mobile, userType });
+      console.log(driver.otp, "My Otp");
+      console.log(driver.userType, "userType");
+      console.log(driver, "otppspspsp");
+      console.log(driver.otp == Otp, "otp check");
+      if (driver.otp == Otp) {
+        const token = await jwtToken.createNewToken(user);
+        responseHandler.data(
+          res,
+          {
+            token,
+            is_profileUpdated: driver.is_profileUpdated,
+            new_user: driver.is_profileUpdated == true ? false : true,
+          },
+          200
+        );
+      } else {
+        throw Error("Otp is Incorrect");
+      }
     }
   } catch (err) {
     next(err);
@@ -48,7 +69,7 @@ exports.loginUser = async (req, res, next) => {
 
 //Login Driver
 exports.loginDriver = async (req, res, next) => {
-  const { Mobile,OTP } = req.body;
+  const { Mobile, OTP } = req.body;
   try {
     const driver = await Driver.findOne({ Mobile });
 
@@ -57,8 +78,7 @@ exports.loginDriver = async (req, res, next) => {
       responseHandler.data(
         res,
         {
-          token
-          
+          token,
         },
         200
       );
@@ -80,9 +100,9 @@ exports.loginDriver = async (req, res, next) => {
 //then enter the app
 exports.SendOTP = async (req, res, next) => {
   const { Mobile } = req.body;
-  const {userType}=req.body;
+  const { userType } = req.body;
   console.log(Mobile);
-  console.log(userType,"userType");
+  console.log(userType, "userType");
   try {
     const GeneratedOtp = otp.generate(5, {
       digits: true,
@@ -92,26 +112,41 @@ exports.SendOTP = async (req, res, next) => {
     });
     console.log(req.body.Mobile);
     await sendSMS(Mobile, GeneratedOtp);
-console.log(userType);
+    console.log(userType);
     sentotp = Object.assign({
       otp: GeneratedOtp,
     });
     console.log(Mobile, "Mobileee");
-    console.log(userType,"dfufh");
-    const user = await User.findOne({ Mobile ,userType});
-    
-    console.log(user);
-    if (!user) {
-      new User({ Mobile, otp: GeneratedOtp,userType }).save();
+    console.log(userType, "dfufh");
+    if (userType === "user") {
+      const user = await User.findOne({ Mobile, userType });
+
+      console.log(user);
+      if (!user) {
+        new User({ Mobile, otp: GeneratedOtp, userType }).save();
+      } else {
+        const updateUser = await User.updateOne(
+          { Mobile },
+          { otp: GeneratedOtp }
+        );
+      }
+      console.log(GeneratedOtp, "new otp");
+      responseHandler.data(res, { otp: GeneratedOtp }, 200);
     } else {
-      const updateUser = await User.updateOne(
-        { Mobile,userType },
-         { otp: GeneratedOtp },
-         
-      );
+      const user = await Driver.findOne({ Mobile, userType });
+
+      console.log(user);
+      if (!user) {
+        new Driver({ Mobile, otp: GeneratedOtp }).save();
+      } else {
+        const updateUser = await Driver.updateOne(
+          { Mobile },
+          { otp: GeneratedOtp }
+        );
+      }
+      console.log(GeneratedOtp, "new otp");
+      responseHandler.data(res, { otp: GeneratedOtp }, 200);
     }
-    console.log(GeneratedOtp,"new otp");
-    responseHandler.data(res, { otp: GeneratedOtp }, 200);
   } catch (err) {
     next(err);
   }
@@ -128,7 +163,7 @@ exports.createUser = async (req, res, next) => {
       return responseHandler.failure(res, "user is already register.", 400);
     }
 
-    const response = await new User({ Mobile}).save();
+    const response = await new User({ Mobile }).save();
     responseHandler.data(res, response, 200);
   } catch (err) {
     next(err);
@@ -156,7 +191,7 @@ exports.createDriver = async (req, res, next) => {
 //Send Otp To Driver
 exports.SendOTPToDriver = async (req, res, next) => {
   const { Mobile } = req.body;
-  const {userType}=req.body;
+  const { userType } = req.body;
   try {
     const GeneratedOtp = otp.generate(5, {
       digits: true,
@@ -177,7 +212,8 @@ exports.SendOTPToDriver = async (req, res, next) => {
       new Driver({ Mobile, otp: GeneratedOtp }).save();
     } else {
       const updateDriver = await Driver.updateOne(
-        { Mobile },{userType},
+        { Mobile },
+        { userType },
         { otp: GeneratedOtp }
       );
     }
@@ -187,4 +223,3 @@ exports.SendOTPToDriver = async (req, res, next) => {
     next(err);
   }
 };
-

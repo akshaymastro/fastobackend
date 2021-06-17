@@ -2,15 +2,15 @@ const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
 const rideSchema = new mongoose.Schema({
-   ByUserID: {
- type:Schema.Types.ObjectId,
-ref:"User"
+  ByUserID: {
+    type: Schema.Types.ObjectId,
+    ref: "User",
     // type:String
-   },
+  },
   pickUpLocation: {
     type: {
       type: String, // Don't do `{ location: { type: String } }`
-     //enum: ["Point"], // 'location.type' must be 'Point'
+      //enum: ["Point"], // 'location.type' must be 'Point'
       //required: true,
     },
     coordinates: {
@@ -31,7 +31,7 @@ ref:"User"
   },
   Kms: {
     type: String,
-   //required: true,
+    //required: true,
   },
   goodType: {
     type: String,
@@ -48,9 +48,10 @@ ref:"User"
   receivrNumber: {
     type: Number,
   },
-Driver:{
-type:String,
-},  
+  Driver: {
+    type: Schema.Types.ObjectId,
+    ref: "Driver",
+  },
   vehicalSelected: {
     type: Schema.Types.ObjectId,
     ref: "Vehical",
@@ -97,10 +98,9 @@ type:String,
   StartOpt: {
     type: String,
   },
-  CompleteOtp:{
-    type:String,
-  }
-
+  CompleteOtp: {
+    type: String,
+  },
 });
 
 const Ride = mongoose.model("Ride", rideSchema);
