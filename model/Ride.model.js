@@ -34,7 +34,8 @@ const rideSchema = new mongoose.Schema({
     //required: true,
   },
   goodType: {
-    type: String,
+    type: Schema.Types.ObjectId,
+    ref: "Category",
   },
   pickupName: {
     type: String,
