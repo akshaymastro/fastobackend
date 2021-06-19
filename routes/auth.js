@@ -8,7 +8,7 @@ const router = express.Router();
 router.post("/sendotp", authController.SendOTP);
 
 //get user info
-router.get("/getuser", userAuth, usercont.GetUser);
+router.post("/getuser", authController.GetUser);
 
 //Route to create user
 //this api hits only when react native async otp matches entered otp
