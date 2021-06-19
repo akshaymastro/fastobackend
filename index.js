@@ -81,7 +81,7 @@ io.on("connection", (socket) => {
     );
     const updatedDriver = await DriverModel.findById({ _id: body.id });
     const token = await Jwt.createNewToken(updatedDriver);
-    io.emit("driverupdated", token);
+    socket.emit("driverupdated", token);
   });
 
   socket.on("getNearDrivers", async (body) => {
