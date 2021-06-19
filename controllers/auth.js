@@ -22,7 +22,7 @@ exports.loginUser = async (req, res, next) => {
 
   try {
     if (userType === "user") {
-      const user = await User.findOne({ Mobile, userType });
+      const user = await User.findOne({ Mobile });
       console.log(user.otp, "My Otp");
       console.log(user.userType, "userType");
       console.log(otp, "otppspspsp");
@@ -42,7 +42,7 @@ exports.loginUser = async (req, res, next) => {
         throw Error("Otp is Incorrect");
       }
     } else {
-      const driver = await Driver.findOne({ Mobile, userType });
+      const driver = await Driver.findOne({ Mobile });
       console.log(driver.otp, "My Otp");
       console.log(driver.userType, "userType");
       console.log(driver, "otppspspsp");
