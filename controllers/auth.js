@@ -43,12 +43,13 @@ exports.loginUser = async (req, res, next) => {
       }
     } else {
       const driver = await Driver.findOne({ Mobile });
+      console.log(driver);
       console.log(driver.otp, "My Otp");
       console.log(driver.userType, "userType");
       console.log(driver, "otppspspsp");
       console.log(driver.otp == otp, "otp check");
       if (driver.otp == otp) {
-        const token = await jwtToken.createNewToken(user);
+        const token = await jwtToken.createNewToken(driver);
         responseHandler.data(
           res,
           {
