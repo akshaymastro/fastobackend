@@ -18,16 +18,16 @@ exports.GetUser = async (req, res, next) => {
 
 //Login Passenger
 exports.loginUser = async (req, res, next) => {
-  const { Mobile, Otp, userType } = req.body;
+  const { Mobile, otp, userType } = req.body;
 
   try {
     if (userType === "user") {
       const user = await User.findOne({ Mobile, userType });
       console.log(user.otp, "My Otp");
       console.log(user.userType, "userType");
-      console.log(Otp, "otppspspsp");
-      console.log(user.otp == Otp, "otp check");
-      if (user.otp == Otp) {
+      console.log(otp, "otppspspsp");
+      console.log(user.otp == otp, "otp check");
+      if (user.otp == otp) {
         const token = await jwtToken.createNewToken(user);
         responseHandler.data(
           res,
@@ -46,8 +46,8 @@ exports.loginUser = async (req, res, next) => {
       console.log(driver.otp, "My Otp");
       console.log(driver.userType, "userType");
       console.log(driver, "otppspspsp");
-      console.log(driver.otp == Otp, "otp check");
-      if (driver.otp == Otp) {
+      console.log(driver.otp == otp, "otp check");
+      if (driver.otp == otp) {
         const token = await jwtToken.createNewToken(user);
         responseHandler.data(
           res,
@@ -119,11 +119,11 @@ exports.SendOTP = async (req, res, next) => {
     console.log(Mobile, "Mobileee");
     console.log(userType, "dfufh");
     if (userType === "user") {
-      const user = await User.findOne({ Mobile, userType });
+      const user = await User.findOne({ Mobile });
 
       console.log(user);
       if (!user) {
-        new User({ Mobile, otp: GeneratedOtp, userType }).save();
+        new User({ Mobile, otp: GeneratedOtp }).save();
       } else {
         const updateUser = await User.updateOne(
           { Mobile },
@@ -133,7 +133,7 @@ exports.SendOTP = async (req, res, next) => {
       console.log(GeneratedOtp, "new otp");
       responseHandler.data(res, { otp: GeneratedOtp }, 200);
     } else {
-      const user = await Driver.findOne({ Mobile, userType });
+      const user = await Driver.findOne({ Mobile });
 
       console.log(user);
       if (!user) {
