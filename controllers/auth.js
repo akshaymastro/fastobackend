@@ -135,7 +135,7 @@ exports.SendOTP = async (req, res, next) => {
     } else {
       const driver = await Driver.findOne({ Mobile });
 
-      console.log(user);
+      console.log(driver);
       if (!driver) {
         new Driver({ Mobile, otp: GeneratedOtp }).save();
       } else {
