@@ -3,6 +3,7 @@ const express = require("express");
 const mongoose = require("mongoose");
 const app = express();
 const DriverModel = require("./model/Driver.model");
+const RideModel = require("./model/Ride.model");
 const UserModel = require("./model/User.model");
 var server = require("http").createServer(app);
 var io = require("socket.io")(server);
@@ -83,6 +84,18 @@ io.on("connection", (socket) => {
 
   socket.on("getNearDrivers", async (body) => {
     const res = await DriverModel.find({
+      currentLocation: {
+        $near: {
+          $geometry: { type: "Point", coordinates: body.coordinates },
+          $minDistance: 1000,
+          $maxDistance: 5000,
+        },
+      },
+    });
+    io.emit("NearByDriversList", res);
+  });
+  socket.on("getRidesForDriver", async (body) => {
+    const res = await RideModel.find({
       currentLocation: {
         $near: {
           $geometry: { type: "Point", coordinates: body.coordinates },
