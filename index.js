@@ -78,8 +78,8 @@ io.on("connection", (socket) => {
       }
       // { "currentLocation.type": body.type }
     );
-    console.log(res, "Ressss");
-    io.emit("driverupdated", "Driver Location Updated");
+    const updatedDriver = await DriverModel.findById({ _id: body.id });
+    io.emit("driverupdated", updatedDriver);
   });
 
   socket.on("getNearDrivers", async (body) => {
