@@ -5,6 +5,7 @@ const app = express();
 const DriverModel = require("./model/Driver.model");
 const RideModel = require("./model/Ride.model");
 const UserModel = require("./model/User.model");
+const Jwt = require("./helpers/jwt");
 var server = require("http").createServer(app);
 var io = require("socket.io")(server);
 const helmet = require("helmet");
@@ -79,7 +80,8 @@ io.on("connection", (socket) => {
       // { "currentLocation.type": body.type }
     );
     const updatedDriver = await DriverModel.findById({ _id: body.id });
-    io.emit("driverupdated", updatedDriver);
+    const token = await Jwt.createNewToken(updatedDriver);
+    io.emit("driverupdated", token);
   });
 
   socket.on("getNearDrivers", async (body) => {
