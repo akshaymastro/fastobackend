@@ -133,10 +133,10 @@ exports.SendOTP = async (req, res, next) => {
       console.log(GeneratedOtp, "new otp");
       responseHandler.data(res, { otp: GeneratedOtp }, 200);
     } else {
-      const user = await Driver.findOne({ Mobile });
+      const driver = await Driver.findOne({ Mobile });
 
       console.log(user);
-      if (!user) {
+      if (!driver) {
         new Driver({ Mobile, otp: GeneratedOtp }).save();
       } else {
         const updateUser = await Driver.updateOne(
