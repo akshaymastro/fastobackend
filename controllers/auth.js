@@ -128,7 +128,7 @@ exports.SendOTP = async (req, res, next) => {
       } else {
         const updateUser = await User.updateOne(
           { Mobile },
-          { otp: GeneratedOtp,userType }
+          { otp: GeneratedOtp ,userType}
         );
       }
       console.log(GeneratedOtp, "new otp");
@@ -138,11 +138,11 @@ exports.SendOTP = async (req, res, next) => {
 
       console.log(driver);
       if (!driver) {
-        new Driver({ Mobile, otp: GeneratedOtp,userType }).save();
+        new Driver({ Mobile, otp: GeneratedOtp }).save();
       } else {
         const updateUser = await Driver.updateOne(
           { Mobile },
-          { otp: GeneratedOtp,userType }
+          { otp: GeneratedOtp }
         );
       }
       console.log(GeneratedOtp, "new otp");
