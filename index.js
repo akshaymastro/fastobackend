@@ -96,7 +96,7 @@ io.on("connection", (socket) => {
   });
   socket.on("getRidesForDriver", async (body) => {
     const res = await RideModel.find({
-      currentLocation: {
+      pickupLocation: {
         $near: {
           $geometry: { type: "Point", coordinates: body.coordinates },
           $minDistance: 1000,
@@ -104,7 +104,7 @@ io.on("connection", (socket) => {
         },
       },
     });
-    io.emit("NearByDriversList", res);
+    io.emit("NearByRideList", res);
   });
 });
 
