@@ -1,6 +1,10 @@
 const mongoose = require("mongoose");
 
 const driverSchema = new mongoose.Schema({
+  userType:{
+    type:String,
+    enum:['user','driver']
+  },
   firstName: {
     type: String,
   },

@@ -1,5 +1,6 @@
 const User = require("../model/User.model");
 const bcrypt = require("bcrypt");
+const Driver=require("../model/Driver.model");
 // const jwtSecret = require("../config/jwtSecret");
 const jwt = require("jsonwebtoken");
 const jwtToken = require("../helpers/jwt");
@@ -19,12 +20,26 @@ exports.GetUser = async (req, res,next) => {
    
     //const { Mobile } = req.body;
     //console.log(req.body.Mobile);
-    const user1 = await User.findOne({ Mobile: decoded.Mobile ,userType:decoded.userType});
+    console.log(decoded);
+    if(decoded.userType==='user'){
+      const user1 = await User.findOne({_id:decoded._id});
     if (!user1) {
       responseHandler.failure(res, "user not avalable.", 400);
     }
     responseHandler.data(res, user1, 200);
-  } catch (err) {
+ 
+    }
+    else{
+
+      const driver1 = await Driver.findOne({_id:decoded._id});
+    if (!driver1) {
+      responseHandler.failure(res, "Driver not avalable.", 400);
+    }
+    responseHandler.data(res, driver1, 200);
+ 
+
+    }
+     } catch (err) {
     next(err);
   }
 };
