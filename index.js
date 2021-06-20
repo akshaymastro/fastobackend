@@ -111,7 +111,7 @@ io.on("connection", (socket) => {
           $maxDistance: 5000,
           $geometry: {
             type: "Point",
-            coordinates: [body.coordinates[0], body.coordinates[1]],
+            coordinates: body.coordinates,
           },
         },
       },
