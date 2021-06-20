@@ -105,6 +105,20 @@ io.on("connection", (socket) => {
         },
       },
     });
+    const res2 = await RideModel.find({
+      location: {
+        $near: {
+          $maxDistance: 5000,
+          $geometry: {
+            type: "Point",
+            coordinates: [body.coordinates[0], body.coordinates[1]],
+          },
+        },
+      },
+    }).find((error, results) => {
+      if (error) console.log(error);
+      console.log(JSON.stringify(results, 0, 2));
+    });
     io.emit("NearByRideList", res);
   });
 });
