@@ -110,7 +110,7 @@ io.on("connection", (socket) => {
     const res = await RideModel.aggregate([
       {
         $geoNear: {
-          near: { type: "Point", coordinates: body.coordinates },
+          near: { type: "Point", coordinates: [27.1766701,78.00807449999999] },
           spherical: true,
           distanceField: "calcDistance",
         },
