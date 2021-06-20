@@ -6,16 +6,42 @@ const responseHandler = require("../helpers/responseHandler");
 const jwtToken = require("../helpers/jwt");
 const axios = require("axios");
 
-exports.GetUser = async (req, res, next) => {
+exports.GetUser = async (req, res,next) => {
+
+  const token = req.headers["authorization"];
   try {
-    const { Mobile } = req.body;
-    const user = await User.findOne({ Mobile: req.user.user.Mobile });
-    responseHandler.data(res, user, 200);
-  } catch (err) {
+
+    const decoded = await jwtToken
+    .decryptToken(token)
+    .then((result) => result.user)
+    .catch((error) => error);
+
+   
+    //const { Mobile } = req.body;
+    //console.log(req.body.Mobile);
+    console.log(decoded);
+    if(decoded.userType==='user'){
+      const user1 = await User.findOne({_id:decoded._id});
+    if (!user1) {
+      responseHandler.failure(res, "user not avalable.", 400);
+    }
+    responseHandler.data(res, user1, 200);
+ 
+    }
+    else{
+
+      const driver1 = await Driver.findOne({_id:decoded._id});
+    if (!driver1) {
+      responseHandler.failure(res, "Driver not avalable.", 400);
+    }
+    responseHandler.data(res, driver1, 200);
+ 
+
+    }
+     } catch (err) {
     next(err);
   }
 };
-
 //Login Passenger
 exports.loginUser = async (req, res, next) => {
   const { Mobile, otp, userType } = req.body;
@@ -124,11 +150,11 @@ exports.SendOTP = async (req, res, next) => {
 
       console.log(user);
       if (!user) {
-        new User({ Mobile, otp: GeneratedOtp }).save();
+        new User({ Mobile, otp: GeneratedOtp,userType }).save();
       } else {
         const updateUser = await User.updateOne(
           { Mobile },
-          { otp: GeneratedOtp }
+          { otp: GeneratedOtp ,userType}
         );
       }
       console.log(GeneratedOtp, "new otp");
