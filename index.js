@@ -105,20 +105,17 @@ io.on("connection", (socket) => {
     //     },
     //   },
     // });
-    const res = await RideModel.find({
-      pickUpLocation: {
-        $near: {
-          $maxDistance: 5000,
-          $geometry: {
-            type: "Point",
-            coordinates: body.coordinates,
-          },
+
+    console.log(body.coordinates, "boydddd");
+    const res = await RideModel.aggregate([
+      {
+        $geoNear: {
+          near: { type: "Point", coordinates: body.coordinates },
+          spherical: true,
+          distanceField: "calcDistance",
         },
       },
-    }).find((error, results) => {
-      if (error) console.log(error);
-      console.log(JSON.stringify(results, 0, 2));
-    });
+    ]);
     io.emit("NearByRideList", res);
   });
 });
