@@ -96,26 +96,38 @@ io.on("connection", (socket) => {
     io.emit("NearByDriversList", res);
   });
   socket.on("getRidesForDriver", async (body) => {
-    // const res = await RideModel.find({
-    //   pickUpLocation: {
-    //     $near: {
-    //       $geometry: { type: "Point", coordinates: body.coordinates },
-    //       $minDistance: 1000,
-    //       $maxDistance: 5000,
-    //     },
-    //   },
-    // });
-
-    console.log(body.coordinates, "boydddd");
-    const res = await RideModel.aggregate([
-      {
-        $geoNear: {
-          near: { type: "Point", coordinates: [27.1766701,78.00807449999999] },
-          spherical: true,
-          distanceField: "calcDistance",
+    const res = await RideModel.aggregate(
+      [
+        {
+          $geoNear: {
+            near: {
+              type: "Point",
+              coordinates: [27.1766701, 78.008744999999999],
+            },
+            spherical: true,
+            distanceField: "dis",
+          },
         },
-      },
-    ]);
+        { $skip: 0 },
+        { $limit: 2 },
+      ],
+      function (err, shapes) {
+        if (err) throw err;
+        //console.log( shapes );
+
+        // shapes = shapes.map(function (x) {
+        //   delete x.dis;
+        //   return new Shape(x);
+        // });
+
+        // Shape.populate(shapes, { path: "info" }, function (err, docs) {
+        //   if (err) throw err;
+
+        //   console.log(JSON.stringify(docs, undefined, 4));
+        // });
+      }
+    );
+    console.log(res, "Resss");
     io.emit("NearByRideList", res);
   });
 });
