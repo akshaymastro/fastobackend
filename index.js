@@ -74,7 +74,7 @@ io.on("connection", (socket) => {
       {
         currentLocation: {
           type: "Point",
-          coordinates: [body.coordinates.lat, body.coordinates.long],
+          coordinates: [body.coordinates.long, body.coordinates.lat],
         },
       }
       // { "currentLocation.type": body.type }
