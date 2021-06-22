@@ -96,13 +96,14 @@ io.on("connection", (socket) => {
     io.emit("NearByDriversList", res);
   });
   socket.on("getRidesForDriver", async (body) => {
+    console.log(body.coordinates, "body coordinates");
     const res = await RideModel.aggregate(
       [
         {
           $geoNear: {
             near: {
               type: "Point",
-              coordinates: [27.1766701, 78.008744999999999],
+              coordinates: body.coordinates,
             },
             spherical: true,
             distanceField: "dis",

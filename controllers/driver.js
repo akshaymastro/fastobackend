@@ -189,6 +189,7 @@ exports.getNearByRides = async (req, res, next) => {
             },
             spherical: true,
             distanceField: "dis",
+            maxDistance: 5000,
           },
         },
         { $skip: 0 },
