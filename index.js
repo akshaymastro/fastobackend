@@ -106,6 +106,7 @@ io.on("connection", (socket) => {
             },
             spherical: true,
             distanceField: "dis",
+            maxDistance: 5000,
           },
         },
         { $skip: 0 },
