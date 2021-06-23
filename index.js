@@ -110,8 +110,6 @@ io.on("connection", (socket) => {
             maxDistance: 5000,
           },
         },
-        { $skip: 0 },
-        { $limit: 2 },
       ],
       function (err, shapes) {
         if (err) throw err;
