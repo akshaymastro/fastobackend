@@ -68,6 +68,8 @@ const rideSchema = new mongoose.Schema({
   paymentType: {
     type: String,
   },
+  pickUpOtp: { type: String },
+  recevierOtp: { type: String },
   paymentId: {
     type: String,
   },
