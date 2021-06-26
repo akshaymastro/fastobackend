@@ -61,6 +61,12 @@ const rideSchema = new mongoose.Schema({
     type: Boolean,
     default: false,
   },
+  qty: {
+    type: String,
+  },
+  charges: {
+    type: String,
+  },
   unloadingTimer: {
     type: Boolean,
     default: false,
