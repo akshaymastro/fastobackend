@@ -130,6 +130,12 @@ io.on("connection", (socket) => {
     console.log(res, "Resss");
     io.emit("NearByRideList", res);
   });
+
+  socket.on("acceptride", async (body) => {
+    const res = RideModel.updateOne({ _id: body.id }, { ...body });
+    console.log(res, "ressss");
+    io.emit("RideAccepted", "Ride Accepted");
+  });
 });
 
 server.listen(PORT || 3000, () =>
