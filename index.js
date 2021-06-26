@@ -138,9 +138,15 @@ io.on("connection", (socket) => {
       { $push: { ongoingRide: body.id } }
     );
     console.log(res1, "resss");
-    console.log(res, "ride model reponse");
+
     io.emit("RideAccepted", "Ride Accepted");
   });
+});
+
+socket.on("updateRide", async (body) => {
+  console.log(body, "bodydyyd");
+  const res = await RideModel.updateOne({ _id: body.id }, { ...body });
+  console.log(res, "ride model reponse");
 });
 
 server.listen(PORT || 3000, () =>
