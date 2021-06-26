@@ -141,12 +141,11 @@ io.on("connection", (socket) => {
 
     io.emit("RideAccepted", "Ride Accepted");
   });
-});
-
-socket.on("updateRide", async (body) => {
-  console.log(body, "bodydyyd");
-  const res = await RideModel.updateOne({ _id: body.id }, { ...body });
-  console.log(res, "ride model reponse");
+  socket.on("updateRide", async (body) => {
+    console.log(body, "bodydyyd");
+    const res = await RideModel.updateOne({ _id: body.id }, { ...body });
+    console.log(res, "ride model reponse");
+  });
 });
 
 server.listen(PORT || 3000, () =>
