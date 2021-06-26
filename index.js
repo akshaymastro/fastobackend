@@ -130,7 +130,10 @@ io.on("connection", (socket) => {
     console.log(res, "Resss");
     io.emit("NearByRideList", res);
   });
-
+  socket.on("getCurrentRide", async (body) => {
+    const res = await RideModel.findById({ _id: body.id });
+    io.emit("getUpdatedRide", res);
+  });
   socket.on("acceptride", async (body) => {
     const res = await RideModel.updateOne({ _id: body.id }, { ...body });
     const res1 = await DriverModel.updateOne(
