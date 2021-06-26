@@ -93,6 +93,7 @@ exports.CreateRide = async (req, res, next) => {
       dropLocation: req.body.dropLocation,
       Kms: req.body.kms,
       goodType: req.body.goodType,
+      qty: req.body.qty,
       pickupName: req.body.pickupName,
       pickupNumber: req.body.pickupNumber,
       receivrNumber: req.body.receivrNumber,
@@ -115,11 +116,11 @@ exports.CreateRide = async (req, res, next) => {
       CompleteOtp: req.body.CompleteOtp,
       message: req.body.message,
     }).save();
-    console.log(decoded._id, "userRide");
+    console.log(ride, "userRide");
     const saverideintouser = await User.findByIdAndUpdate(decoded._id, {
       $push: { rideHistory: ride._id },
     });
-    responseHandler.data(res, saverideintouser, 200);
+    responseHandler.data(res, ride, 200);
   } catch (error) {
     next(error);
   }
