@@ -185,15 +185,13 @@ exports.getNearByRides = async (req, res, next) => {
           $geoNear: {
             near: {
               type: "Point",
-              coordinates: [27.1766701, 78.008744999999999],
+              coordinates: req.body.coordinates,
             },
             spherical: true,
-            distanceField: "dis",
-            maxDistance: 5000,
+            distanceField: "dist.calculated",
+            maxDistance: 1000,
           },
         },
-        { $skip: 0 },
-        { $limit: 2 },
       ],
       function (err, shapes) {
         if (err) throw err;

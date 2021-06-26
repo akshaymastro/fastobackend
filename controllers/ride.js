@@ -125,7 +125,19 @@ exports.CreateRide = async (req, res, next) => {
     next(error);
   }
 };
-
+exports.getRideData = async (req, res, next) => {
+  try {
+    const token = req.headers["authorization"];
+    const decoded = await jwtToken
+      .decryptToken(token)
+      .then((result) => result.user)
+      .catch((err) => err);
+    const currentRide = await Ride.findById({ _id: req.body._id });
+    responseHandler.data(res, currentRide, 200);
+  } catch (err) {
+    next(err);
+  }
+};
 //Delete Ride
 exports.DeleteRide = async (req, res) => {
   try {
