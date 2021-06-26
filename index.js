@@ -142,9 +142,19 @@ io.on("connection", (socket) => {
     io.emit("RideAccepted", "Ride Accepted");
   });
   socket.on("updateRide", async (body) => {
-    console.log(body, "bodydyyd");
-    const res = await RideModel.updateOne({ _id: body.id }, { ...body });
-    console.log(res, "ride model reponse");
+    if (body.StartOpt || body.CompleteOtp) {
+      const getRide = await RideModel.findOne({ _id: body.id });
+      if (getRide.pickUpOtp == body.StartOpt) {
+        const res = await RideModel.updateOne({ _id: body.id }, { ...body });
+        console.log(res, "ride model reponse on start");
+      } else if (getRide.recevierOtp == body.CompleteOtp) {
+        const res = await RideModel.updateOne({ _id: body.id }, { ...body });
+        console.log(res, "ride model reponse oncomplete");
+      }
+    } else {
+      const res = await RideModel.updateOne({ _id: body.id }, { ...body });
+      console.log(res, "ride model reponse intial update");
+    }
   });
 });
 
