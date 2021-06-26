@@ -132,8 +132,7 @@ io.on("connection", (socket) => {
   });
   socket.on("getCurrentRide", async (body) => {
     const res = await RideModel.findById({
-      ByUserID: body.userid,
-      status: "pending",
+      _id: body.id,
     });
     io.emit("getUpdatedRide", res);
   });
