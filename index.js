@@ -133,7 +133,11 @@ io.on("connection", (socket) => {
 
   socket.on("acceptride", async (body) => {
     const res = await RideModel.updateOne({ _id: body.id }, { ...body });
-    console.log(res, "ressss");
+    const res1 = await DriverModel.updateOne(
+      { _id: body.driveId },
+      { $push: { ongoingRide: body.id } }
+    );
+    console.log(res1, "resss");
     io.emit("RideAccepted", "Ride Accepted");
   });
 });
