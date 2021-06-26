@@ -57,6 +57,14 @@ const rideSchema = new mongoose.Schema({
     type: Schema.Types.ObjectId,
     ref: "Vehical",
   },
+  loadingTimer: {
+    type: Boolean,
+    default: false,
+  },
+  unloadingTimer: {
+    type: Boolean,
+    default: false,
+  },
   paymentType: {
     type: String,
   },
@@ -95,7 +103,7 @@ const rideSchema = new mongoose.Schema({
   },
   status: {
     type: String,
-    enum: ["accepted", "inprogress", "completed"],
+    enum: ["accepted", "started", "inprogress", "completed"],
   },
   StartOpt: {
     type: String,
