@@ -138,6 +138,7 @@ io.on("connection", (socket) => {
       { $push: { ongoingRide: body.id } }
     );
     console.log(res1, "resss");
+    console.log(res, "ride model reponse");
     io.emit("RideAccepted", "Ride Accepted");
   });
 });
