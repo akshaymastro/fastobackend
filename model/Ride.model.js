@@ -95,6 +95,7 @@ const rideSchema = new mongoose.Schema({
   },
   status: {
     type: String,
+    enum: ["accepted", "inprogress", "completed"],
   },
   StartOpt: {
     type: String,
