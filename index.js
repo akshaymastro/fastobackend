@@ -5,6 +5,7 @@ const app = express();
 const DriverModel = require("./model/Driver.model");
 const RideModel = require("./model/Ride.model");
 const UserModel = require("./model/User.model");
+const TicketReplyModel = require("./model/TicketReply.model");
 const Jwt = require("./helpers/jwt");
 var server = require("http").createServer(app);
 var io = require("socket.io")(server);
@@ -177,6 +178,64 @@ io.on("connection", (socket) => {
     } else {
       const res = await RideModel.updateOne({ _id: body.id }, { ...body });
       console.log(res, "ride model reponse intial update");
+    }
+  });
+  socket.on("joinRoom", async (data) => {
+    try {
+      console.log(data, typeof data, "joinRoomdata");
+      if (data && data.replytoticketID) {
+        console.log(
+          "user connection chat id:",
+          data.replytoticketID,
+          socket.id
+        );
+        socket.join(data.replytoticketID);
+        io.to(socket.id).emit("joinRoomOk", {
+          status: 200,
+        });
+      }
+    } catch (error) {
+      console.log(error, "error");
+    }
+  });
+  socket.on("leaveRoom", async function (data) {
+    try {
+      console.log(data, typeof data, "leaveRoomdata");
+      if (data && data.replytoticketID) {
+        console.log(
+          "leave connection chat id:",
+          data.replytoticketID,
+          socket.id
+        );
+        socket.leave(data.replytoticketID);
+      }
+    } catch (error) {
+      console.log(error, "error");
+    }
+  });
+  socket.on("send_message", async (data) => {
+    try {
+      console.log("send_message", data);
+      if (
+        data &&
+        data.adminId &&
+        data.userId &&
+        data.replyMsg &&
+        data.replytoticketID
+      ) {
+        let payload = {
+          replytoticketID: data.replytoticketID,
+          replyMsg: data.replyMsg,
+          isReplyByAdmin: data.isReplyByAdmin,
+          isReplyByUser: data.isReplyByUser,
+          userId: data.userId,
+          adminId: data.adminId,
+        };
+        let messageData = await TicketReplyModel(payload).save();
+        io.to(data.replytoticketID).emit("receive_message", messageData);
+      }
+    } catch (error) {
+      console.log(error, "error");
     }
   });
 });

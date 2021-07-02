@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const { data } = require("../helpers/responseHandler");
 const Schema = mongoose.Schema;
 
 
@@ -8,15 +9,29 @@ const ticketReplySchema = new mongoose.Schema({
       type: String,      
       required: true
     },
-    Replytime: {
-      type: String,      
-      required: true
+    isReplyByAdmin : {
+      type : Boolean,
+      default : false
     },
-    replydate: {
-      type: String,      
-      required: true
-    }    
-  });
+    isReplyByUser : {
+      type : Boolean,
+      default : false
+    },
+    userId: {
+        type: Schema.Types.ObjectId,
+        ref: 'User'
+    },
+    adminId: {
+      type: Schema.Types.ObjectId,
+      ref: 'Admin'
+  },
+  isDeleted: {
+    type : Boolean,
+    default : false
+  }
+  }, {
+    timestamps: true
+});
 
 const TicketReply = mongoose.model("TicketReply", ticketReplySchema);
 
