@@ -187,7 +187,7 @@ io.on("connection", (socket) => {
   });
   socket.on('send_message', async (data) => {
     try {
-      console.log("chating", data)
+      console.log("send_message", data)
       if(data && data.adminId && data.userId && data.replyMsg && data.replytoticketID){
         let payload = {
           replytoticketID : data.replytoticketID,
