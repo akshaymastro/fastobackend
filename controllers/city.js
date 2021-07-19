@@ -11,7 +11,7 @@ exports.createCity = async (req, res, next) => {
 };
 
 exports.updateCity = async (req, res, next) => {
-  console.log(req.body.id,req.body);
+  console.log(req.body.id, req.body);
   try {
     await City.updateOne({ _id: req.body._id }, { ...req.body });
     responseHelper.success(res, "City Updated SuccessFully", 200);

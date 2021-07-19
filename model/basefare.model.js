@@ -11,6 +11,10 @@ const PriceSchema = new mongoose.Schema({
   },
   basefare:{
     type: Array
+  },
+  waitingcharge:{
+
+    type:String,
   }
   
 });

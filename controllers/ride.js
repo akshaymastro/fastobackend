@@ -104,21 +104,15 @@ message:req.body.message
 };
 
 //Delete Ride
-exports.DeleteRide = async (req, res) => {
+exports.DeleteRide = async (req, res,next) => {
   try {
-    const token = req.headers["authorization"];
-    const decoded = await jwtToken
-      .decryptToken(token)
-      .then((result) => result.user)
-      .catch((error) => error);
+    
     const deleteride = await Ride.findByIdAndDelete({
       _id: req.body.rideid,
     });
+  
     //   res.send(deleteride)
-    const deleterideidfromuser = await User.findByIdAndUpdate(decoded._id, {
-      $pull: { rideHistory: deleteride._id },
-    });
-    responseHandler.data(res, deleterideidfromuser, 200);
+    responseHandler.data(res, "ride is deleted successfull", 200);
   } catch (err) {
     next(err);
   }

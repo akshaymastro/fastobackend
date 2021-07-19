@@ -14,7 +14,6 @@ const CitySchema = new mongoose.Schema({
   city_class: {
     type: String,
   },
-  
 });
 
 const City = mongoose.model("City", CitySchema);
