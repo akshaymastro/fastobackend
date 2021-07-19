@@ -16,7 +16,7 @@ router.post("/deleteDriver", driverController.DeleteDriver);
 
 //Route to update current location of drivers
 router.patch("/updateUser", multer().any(), driverController.UpdateUser);
-router.get("/getRide", driverController.getNearByRides);
+router.post("/getRide", driverController.getNearByRides);
 
 //Route to update profile picture url of uploaded image
 router.post(

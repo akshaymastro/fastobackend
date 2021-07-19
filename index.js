@@ -5,6 +5,7 @@ const app = express();
 const DriverModel = require("./model/Driver.model");
 const RideModel = require("./model/Ride.model");
 const UserModel = require("./model/User.model");
+const TicketReplyModel = require("./model/TicketReply.model");
 const Jwt = require("./helpers/jwt");
 var server = require("http").createServer(app);
 var io = require("socket.io")(server);
@@ -65,8 +66,26 @@ app.use("/offer", offerRouter);
 app.use("/goodsType", goodsRouter);
 app.use("/payment", authMiddleware, paymentRoute);
 app.use(errorHandler);
+
+let taxiSocket = null;
+let passengerSocket = null;
 io.on("connection", (socket) => {
   console.log(socket.id);
+  socket.on("passengerRequest", () => {
+    console.log("Someone wants a passenger!");
+    taxiSocket = socket;
+  });
+  socket.on("taxiRequest", (taxiRoute) => {
+    passengerSocket = socket;
+    console.log("Someone wants a taxi!");
+    if (taxiSocket !== null) {
+      taxiSocket.emit("taxiRequest", taxiRoute);
+    }
+  });
+  socket.on("driverLocation", (driverLocation) => {
+    console.log(driverLocation);
+    passengerSocket.emit("driverLocation", driverLocation);
+  });
 
   socket.on("updateRiderLocation", async (body) => {
     console.log(body, "bodydyd");
@@ -75,7 +94,7 @@ io.on("connection", (socket) => {
       {
         currentLocation: {
           type: "Point",
-          coordinates: [body.coordinates.lat, body.coordinates.long],
+          coordinates: [body.coordinates.long, body.coordinates.lat],
         },
       }
       // { "currentLocation.type": body.type }
@@ -111,8 +130,6 @@ io.on("connection", (socket) => {
             maxDistance: 5000,
           },
         },
-        { $skip: 0 },
-        { $limit: 2 },
       ],
       function (err, shapes) {
         if (err) throw err;
@@ -132,6 +149,95 @@ io.on("connection", (socket) => {
     );
     console.log(res, "Resss");
     io.emit("NearByRideList", res);
+  });
+  socket.on("getCurrentRide", async (body) => {
+    const res = await RideModel.findById({
+      _id: body.id,
+    });
+    io.emit("getUpdatedRide", res);
+  });
+  socket.on("acceptride", async (body) => {
+    const res = await RideModel.updateOne({ _id: body.id }, { ...body });
+    const res1 = await DriverModel.updateOne(
+      { _id: body.driveId },
+      { $push: { ongoingRide: body.id } }
+    );
+    console.log(res1, "resss");
+
+    io.emit("RideAccepted", "Ride Accepted");
+  });
+  socket.on("updateRide", async (body) => {
+    if (body.StartOpt || body.CompleteOtp) {
+      const getRide = await RideModel.findOne({ _id: body.id });
+      if (getRide.pickUpOtp == body.StartOpt) {
+        const res = await RideModel.updateOne({ _id: body.id }, { ...body });
+        console.log(res, "ride model reponse on start");
+      } else if (getRide.recevierOtp == body.CompleteOtp) {
+        const res = await RideModel.updateOne({ _id: body.id }, { ...body });
+        console.log(res, "ride model reponse oncomplete");
+      }
+    } else {
+      const res = await RideModel.updateOne({ _id: body.id }, { ...body });
+      console.log(res, "ride model reponse intial update");
+    }
+  });
+  socket.on("joinRoom", async (data) => {
+    try {
+      console.log(data, typeof data, "joinRoomdata");
+      if (data && data.replytoticketID) {
+        console.log(
+          "user connection chat id:",
+          data.replytoticketID,
+          socket.id
+        );
+        socket.join(data.replytoticketID);
+        io.to(socket.id).emit("joinRoomOk", {
+          status: 200,
+        });
+      }
+    } catch (error) {
+      console.log(error, "error");
+    }
+  });
+  socket.on("leaveRoom", async function (data) {
+    try {
+      console.log(data, typeof data, "leaveRoomdata");
+      if (data && data.replytoticketID) {
+        console.log(
+          "leave connection chat id:",
+          data.replytoticketID,
+          socket.id
+        );
+        socket.leave(data.replytoticketID);
+      }
+    } catch (error) {
+      console.log(error, "error");
+    }
+  });
+  socket.on("send_message", async (data) => {
+    try {
+      console.log("send_message", data);
+      if (
+        data &&
+        data.adminId &&
+        data.userId &&
+        data.replyMsg &&
+        data.replytoticketID
+      ) {
+        let payload = {
+          replytoticketID: data.replytoticketID,
+          replyMsg: data.replyMsg,
+          isReplyByAdmin: data.isReplyByAdmin,
+          isReplyByUser: data.isReplyByUser,
+          userId: data.userId,
+          adminId: data.adminId,
+        };
+        let messageData = await TicketReplyModel(payload).save();
+        io.to(data.replytoticketID).emit("receive_message", messageData);
+      }
+    } catch (error) {
+      console.log(error, "error");
+    }
   });
 });
 

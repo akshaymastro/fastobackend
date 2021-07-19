@@ -1,7 +1,6 @@
 const mongoose = require("mongoose");
 
 const driverSchema = new mongoose.Schema({
-  
   firstName: {
     type: String,
   },
@@ -36,7 +35,7 @@ const driverSchema = new mongoose.Schema({
   },
   rideHistory: [],
   ongoingRide: {
-    type: String,
+    type: Array,
   },
   driverTicket: {
     type: String,
