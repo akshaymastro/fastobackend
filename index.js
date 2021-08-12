@@ -7,8 +7,8 @@ const RideModel = require("./model/Ride.model");
 const UserModel = require("./model/User.model");
 const TicketReplyModel = require("./model/TicketReply.model");
 const Jwt = require("./helpers/jwt");
-var server = require("http").createServer(app);
-var io = require("socket.io")(server);
+const server = require("http").createServer(app);
+const io = require("socket.io")(server);
 const helmet = require("helmet");
 const cors = require("cors");
 const connectDB = require("./settings/connectDB");
@@ -32,7 +32,6 @@ const cityRouter = require("./routes/city");
 const errorHandler = require("./utils/globalErrorHandler");
 const userController = require("./controllers/users");
 const baseRouter = require("./routes/base");
-const invoice = require("./routes/invoice");
 const { PORT } = process.env;
 
 connectDB()
@@ -52,7 +51,7 @@ app.use("/verify", userController.Verification);
 app.use("/rides", rideRouter);
 //app.use("/ticket", authMiddleware, ticketRouter);
 app.use("/ticket", ticketRouter);
-app.use("/invoice", invoice);
+
 app.use("/basefare", baseRouter);
 
 app.use("/ticketReply", authMiddleware, ticketReplyRouter);
@@ -66,27 +65,7 @@ app.use("/offer", offerRouter);
 app.use("/goodsType", goodsRouter);
 app.use("/payment", authMiddleware, paymentRoute);
 app.use(errorHandler);
-
-let taxiSocket = null;
-let passengerSocket = null;
 io.on("connection", (socket) => {
-  console.log(socket.id);
-  socket.on("passengerRequest", () => {
-    console.log("Someone wants a passenger!");
-    taxiSocket = socket;
-  });
-  socket.on("taxiRequest", (taxiRoute) => {
-    passengerSocket = socket;
-    console.log("Someone wants a taxi!");
-    if (taxiSocket !== null) {
-      taxiSocket.emit("taxiRequest", taxiRoute);
-    }
-  });
-  socket.on("driverLocation", (driverLocation) => {
-    console.log(driverLocation);
-    passengerSocket.emit("driverLocation", driverLocation);
-  });
-
   socket.on("updateRiderLocation", async (body) => {
     console.log(body, "bodydyd");
     const res = await DriverModel.updateOne(
@@ -183,62 +162,75 @@ io.on("connection", (socket) => {
   });
   socket.on("joinRoom", async (data) => {
     try {
-      console.log(data, typeof data, "joinRoomdata");
+      console.log(data, typeof (data), "joinRoomdata")
       if (data && data.replytoticketID) {
-        console.log(
-          "user connection chat id:",
-          data.replytoticketID,
-          socket.id
-        );
+        console.log("user connection chat id:", data.replytoticketID, socket.id);
         socket.join(data.replytoticketID);
         io.to(socket.id).emit("joinRoomOk", {
           status: 200,
         });
       }
     } catch (error) {
-      console.log(error, "error");
+      console.log(error,"error")
     }
   });
   socket.on("leaveRoom", async function (data) {
     try {
-      console.log(data, typeof data, "leaveRoomdata");
+      console.log(data, typeof (data), "leaveRoomdata")
       if (data && data.replytoticketID) {
-        console.log(
-          "leave connection chat id:",
-          data.replytoticketID,
-          socket.id
-        );
+        console.log("leave connection chat id:", data.replytoticketID, socket.id);
         socket.leave(data.replytoticketID);
       }
     } catch (error) {
-      console.log(error, "error");
+      console.log(error,"error")
     }
   });
-  socket.on("send_message", async (data) => {
+  socket.on('send_message', async (data) => {
     try {
-      console.log("send_message", data);
-      if (
-        data &&
-        data.adminId &&
-        data.userId &&
-        data.replyMsg &&
-        data.replytoticketID
-      ) {
-        let payload = {
-          replytoticketID: data.replytoticketID,
-          replyMsg: data.replyMsg,
-          isReplyByAdmin: data.isReplyByAdmin,
-          isReplyByUser: data.isReplyByUser,
-          userId: data.userId,
-          adminId: data.adminId,
-        };
-        let messageData = await TicketReplyModel(payload).save();
-        io.to(data.replytoticketID).emit("receive_message", messageData);
+      console.log("send_message", data)
+      if(data && data.adminId && data.userId && data.replyMsg && data.replytoticketID){
+        const payload = {
+          replytoticketID : data.replytoticketID,
+          replyMsg : data.replyMsg,
+          isReplyByAdmin : data.isReplyByAdmin,
+          isReplyByUser : data.isReplyByUser,
+          userId : data.userId,
+          adminId : data.adminId
+        }
+      const messageData = await TicketReplyModel(payload).save();
+      io.to(data.replytoticketID).emit("receive_message", messageData);
       }
     } catch (error) {
-      console.log(error, "error");
+      console.log(error,"error")
     }
-  });
+  })
+  socket.on('verifyOtp', async (data) => {
+    try {
+      console.log("verifyOtp", data)
+      if(data  && data.rideId && data.driverId){
+        let payload = {
+          _id: mongoose.Types.ObjectId(data.rideId),
+          Driver : mongoose.Types.ObjectId(data.driverId)
+        }
+        let checkOtp =  null;
+        if(data.pickUpOtp != null && data.pickUpOtp != ""){
+          payload.pickUpOtp = data.pickUpOtp;
+          checkOtp = await RideModel.findOneAndUpdate(payload,{$set:{PickedUpAt:new Date()}},{new: true});
+        }else if(data.recevierOtp != null && data.recevierOtp != ""){
+          payload.recevierOtp = data.recevierOtp
+          checkOtp = await RideModel.findOneAndUpdate(payload,{$set:{RecivedAt:new Date()}},{new: true});
+        }
+        let isVerify = false;
+        if(checkOtp != null){
+          isVerify = true;
+        }
+        io.to(data.driverId).emit("otpListner", {isVerify :isVerify});
+      }
+    } catch (error) {
+      console.log(error,"error")
+    }
+  })
+
 });
 
 server.listen(PORT || 3000, () =>
