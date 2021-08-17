@@ -1,113 +1,122 @@
-const mongoose = require("mongoose");
-
+const mongoose = require('mongoose')
+const Schema = mongoose.Schema
 const driverSchema = new mongoose.Schema({
   firstName: {
-    type: String,
+    type: String
   },
   lastName: {
-    type: String,
+    type: String
   },
   userName: {
-    type: String,
+    type: String
   },
   email: {
-    type: String,
+    type: String
   },
   otp: {
-    type: String,
+    type: String
   },
   Mobile: {
     type: String,
-    required: true,
+    required: true
   },
   is_profileUpdated: {
     type: Boolean,
-    default: false,
+    default: false
+  },
+  is_verified: {
+    type: Boolean,
+    default: false
   },
   currentLocation: {
     type: {
       type: String, // Don't do `{ location: { type: String } }`
-      enum: ["Point"], // 'location.type' must be 'Point'
+      enum: ['Point'] // 'location.type' must be 'Point'
     },
     coordinates: {
-      type: [Number],
-    },
+      type: [Number]
+    }
   },
   rideHistory: [],
   ongoingRide: {
-    type: Array,
+    type: Schema.Types.ObjectId,
+    ref: 'Ride'
   },
   driverTicket: {
-    type: String,
+    type: String
   },
   chatSupport: {
-    type: String,
+    type: String
   },
   driverNofifications: {
-    type: String,
+    type: String
   },
   driverInvoice: {
-    type: String,
+    type: String
+  },
+  is_block: {
+    type: Boolean,
+    default: false
   },
   walletMoney: {
-    type: String,
+    type: String
   },
   token: {
-    type: String,
+    type: String
   },
   dp: {
-    type: String,
+    type: String
   },
   address: {
-    type: String,
+    type: String
   },
   state: {
-    type: String,
+    type: String
   },
   city: {
-    type: String,
+    type: String
   },
   pincode: {
-    type: String,
+    type: String
   },
   memberType: {
-    type: String,
+    type: String
   },
   couponAvailable: {
-    type: String,
+    type: String
   },
   driverAadhaar: {
-    type: String,
+    type: String
   },
   driverPan: {
-    type: String,
+    type: String
   },
   driverLic: {
-    type: String,
+    type: String
   },
   driverRc: {
-    type: String,
+    type: String
   },
   driverCategory: {
-    type: String,
+    type: String
   },
   driverInsurance: {
-    type: String,
+    type: String
   },
   driverNCR: {
-    type: String,
+    type: String
   },
   activeStatus: {
-    type: String,
+    type: String
   },
   totalKM: {
-    type: String,
+    type: String
   },
   activeHrsRecord: {
-    type: String,
-  },
-});
+    type: String
+  }
+})
 
-driverSchema.index({ currentLocation: "2dsphere" });
-const Driver = mongoose.model("Driver", driverSchema);
-module.exports = Driver;
+driverSchema.index({ currentLocation: '2dsphere' })
+const Driver = mongoose.model('Driver', driverSchema)
+module.exports = Driver

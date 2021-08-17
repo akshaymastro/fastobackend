@@ -1,139 +1,137 @@
-const mongoose = require("mongoose");
-const Schema = mongoose.Schema;
-const geocoder = require("../utils/geocoder");
+const mongoose = require('mongoose')
+const Schema = mongoose.Schema
+const geocoder = require('../utils/geocoder')
 
 const userSchema = new mongoose.Schema({
-  userType:{
-    type:String,
-    enum:['user','driver']
+  userType: {
+    type: String,
+    enum: ['user', 'driver']
   },
   firstName: {
-    type: String,
+    type: String
   },
   lastName: {
-    type: String,
+    type: String
   },
   is_profileUpdated: {
     type: Boolean,
-    default: false,
+    default: false
   },
   userName: {
-    type: String,
+    type: String
   },
   email: {
-    type: String,
+    type: String
   },
   Mobile: {
     type: Number,
-    required: true,
+    required: true
+  },
+  is_block: {
+    type: Boolean,
+    default: false
   },
   currentLocation: {
     type: {
       type: String, // Don't do `{ location: { type: String } }`
-      enum: ["Point"], // 'location.type' must be 'Point'
+      enum: ['Point'] // 'location.type' must be 'Point'
     },
     coordinates: {
-      type: [Number],
-    },
+      type: [Number]
+    }
   },
   pickupLocation: {
     type: {
       type: String, // Don't do `{ location: { type: String } }`
-      enum: ["Point"], // 'location.type' must be 'Point'
+      enum: ['Point'] // 'location.type' must be 'Point'
     },
     coordinates: {
-      type: [Number],
-    },
+      type: [Number]
+    }
   },
   pickupDetails: {
-    type: Object,
+    type: Object
   },
   dropLocation: {
     type: {
       type: String, // Don't do `{ location: { type: String } }`
-      enum: ["Point"], // 'location.type' must be 'Point'
+      enum: ['Point'] // 'location.type' must be 'Point'
     },
     coordinates: {
-      type: [Number],
+      type: [Number]
     },
-    formattedAddress: String,
+    formattedAddress: String
   },
-  rideHistory: [{ type: Schema.Types.ObjectId, ref: "Ride" }],
+  rideHistory: [{ type: Schema.Types.ObjectId, ref: 'Ride' }],
   ongoingRide: {},
-  userTicket: [{ type: Schema.Types.ObjectId, ref: "Ticket" }],
-  chatSupport: [{ type: Schema.Types.ObjectId, ref: "Chat" }],
+  userTicket: [{ type: Schema.Types.ObjectId, ref: 'Ticket' }],
+  chatSupport: [{ type: Schema.Types.ObjectId, ref: 'Chat' }],
   userNofifications: [{}],
   userInvoice: [{}],
   walletMoney: {
-    type: String,
+    type: String
   },
   otp: {
-    type: Number,
+    type: Number
   },
   offerGiven: [{}],
   offerUsed: [{}],
   token: {
-    type: String,
+    type: String
   },
   dp: {
-    type: String,
+    type: String
   },
   address: {
-    type: String,
+    type: String
   },
   state: {
-    type: String,
+    type: String
   },
   city: {
-    type: String,
+    type: String
   },
   driverAadhaar: {
-    type: String,
-   
+    type: String
   },
   driverPan: {
-    type: String,
-     },
+    type: String
+  },
   driverLic: {
-    type: String,
-    
+    type: String
   },
   driverRc: {
-    type: String,
-    
+    type: String
   },
   driverCategory: {
-    type: String,
-    
+    type: String
   },
   driverInsurance: {
-    type: String,
-    
+    type: String
   },
   driverNCR: {
-    type: String,
-    
+    type: String
   },
   pincode: {
-    type: Number,
+    type: Number
   },
   memberType: {
     type: String,
-    enum: ["Normal", "Receiver", "Pickup"],
+    enum: ['Normal', 'Receiver', 'Pickup']
   },
   couponAvailable: {
-    type: String,
+    type: String
   },
   isEmailVerified: {
     type: Boolean,
-    default: false,
+    default: false
   },
   emailToken: {
-    type: String,
-  },
-});
+    type: String
+  }
+})
 
-userSchema.pre("save", async function (next) {
+userSchema.pre('save', async function (next) {
   // const loc = await geocoder.geocode(this.address);
   // this.currentLocation = {
   //   type: "Point",
@@ -141,9 +139,9 @@ userSchema.pre("save", async function (next) {
   //   formattedAddress: loc[0].formattedAddress,
   // };
   // this.address = undefined;
-  next();
-});
+  next()
+})
 
-const User = mongoose.model("User", userSchema);
+const User = mongoose.model('User', userSchema)
 
-module.exports = User;
+module.exports = User

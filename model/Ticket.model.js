@@ -1,59 +1,59 @@
-const mongoose = require("mongoose");
-const Schema = mongoose.Schema;
-
+const mongoose = require('mongoose')
+const Schema = mongoose.Schema
 
 const ticketSchema = new mongoose.Schema({
-    ByUserID: {
-      type: String
-    },
-    RideID: {
-      type: String
-    },
-    Subject: {
-      type: String
-    },
-    Message: {
-      type: String,
-      required: true
-    },
-    CreatedAt: {
-      type: String,
-      required: true
-    },
-    Time: {
-      type: String
-    },
-    Status: {
+  ByUserID: {
+    type: Schema.Types.ObjectId,
+    ref: 'User'
+  },
+  RideID: {
+    type: String
+  },
+  Subject: {
+    type: String
+  },
+  Message: {
+    type: String,
+    required: true
+  },
+  CreatedAt: {
+    type: String,
+    required: true
+  },
+  Time: {
+    type: String
+  },
+  Status: {
+    type: String
+  },
+  ReplyToTicket: [
+    {
+      ByUser: {
+        type: String,
+        required: true
+      },
+      ByUserAvatar: {
         type: String
       },
-    ReplyToTicket: [
-      {
-       ByUser:{
+      ReplyMsg: {
         type: String,
         required: true
-       },
-       ByUserAvatar:{
-        type: String
-       },
-       ReplyMsg:{
+      },
+      ReplyTime: {
         type: String,
         required: true
-       },
-       ReplyTime:{
+      },
+      RelpyDate: {
         type: String,
         required: true
-       },
-       RelpyDate:{
-        type: String,
-        required: true   
-       }
+      }
     }
   ],
-    Satisfied: {
-        type: String
-      }  
-  });
+  Satisfied: {
+    type: String
+  }
+})
 
-const Ticket = mongoose.model("Ticket", ticketSchema);
+const Ticket = mongoose.model('Ticket', ticketSchema)
 
-module.exports = Ticket;
+module.exports = Ticket
